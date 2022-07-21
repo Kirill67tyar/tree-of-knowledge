@@ -1,0 +1,112 @@
+sources:
+	celery для python
+	https://pypi.org/project/celery/
+
+	для django
+	https://docs.celeryq.dev/en/stable/django/index.html
+
+	открытый код celery
+	https://github.com/celery/celery
+
+	для новичка
+	https://khashtamov.com/ru/celery-best-practices/
+
+	документация
+	https://docs.celeryq.dev/en/stable/
+	https://docs.celeryproject.org/en/stable/
+
+	Rabbitmq - брокер для celery
+	https://habr.com/ru/post/488654/
+	https://www.rabbitmq.com/
+
+	запуск Rabbitmq
+	https://rtfm.co.ua/rabbitmq-zapusk-opisanie-primery/
+
+	просто статья
+	https://habr.com/ru/post/269347/
+
+	стр. 226 django-book
+
+
+		celery
+
+
+Celery - это очередь событий, которая может решать множество различных задач.
+Этот инструмент выполняет задачи из очереди в режиме реального времени
+но также позволяет задать расписание
+
+celery позволяет:
+-- выполнять трудоемкие процессы в асинхронном режиме
+-- инструмент для отложенного выполнения задач по расписанию
+
+queue - очередь (просто слово)
+
+Установка celery - pip install celery (не selery!!!)
+
+дальнейшую установку celery смотри в celery.py
+Константа CELERY_ALWAYS_EAGER - позволяет выполнять асинхронные задачи в синхронном режиме (локально)
+(вместо отправки их в очередь)
+Существует договоренность, что асинхронные задачи для celery должны быть расположены в
+файле tasks.py одного из приложений
+в нашем случае orders/tasks.py
+
+на windows:
+1 - в powershell от администратора:
+
+	choco install rabbitmq
+
+2 - в RabbitMQ Command Prompt (sbin dir) от администратора!
+
+	rabbitmq-server
+	или 
+	rabbitmq-server –detached
+
+3 - в консоли проекта:
+
+	pip install celery
+
+4 - создаёшь celery.py раядом с settings.py (для настроек)
+
+5 - в этом файле (замени project_name = 'shop' на свой проект):
+
+	import os
+	from celery import Celery
+
+	# Задаём переменную окружения, содержащую название файла настроек нашего проекта
+	# для консольных команд celery
+	project_name = 'shop'
+	os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'{project_name}.settings')
+
+	# создаём экземпляр приложения
+	app = Celery('shop')
+
+	# загружаем конфигурацию из настроек нашего проекта
+	# namespace='CELERY' - префикс, который мы будем использовать
+	# для всех настроек связанных с celery
+	# т.е. в django settings можно использовать константы CELERY_<SOME_WORD>
+	# типо CELERY_BROKER_URL
+	app.config_from_object('django.conf:settings', namespace='CELERY')
+
+	# вызываем процесс поиска и загрузки асинзронных задач
+	# celery пройдёт по всем приложениям, из INSTALLED_APPS
+	# и попытается найти файл tasks.py, чтобы запустить код задач
+	app.autodiscover_tasks()
+
+6 - в файле __init__.py проекта (где shop.celery shop замени на название своего проекта)
+
+	from shop.celery import app as celery_app  # подключаем celery, будет выполняться при старте
+
+
+7 - все асинхронные задачи, должны быть расположены в файле tasks.py приложений
+
+
+
+
+
+
+
+ 
+
+
+
+

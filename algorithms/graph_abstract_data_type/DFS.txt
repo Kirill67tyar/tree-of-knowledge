@@ -1,0 +1,65 @@
+https://favtutor.com/blogs/depth-first-search-python
+
+
+DFS - алгоритм поиска в графе. Поиск в глубину (depth-first search)
+Используется для поиска всевозможных вариантов 
+
+# Using a Python dictionary to act as an adjacency list
+graph = {
+  '5' : ['3','7'],
+  '3' : ['2', '4'],
+  '7' : ['8'],
+  '2' : [],
+  '4' : ['8'],
+  '8' : []
+}
+
+visited = set() # Set to keep track of visited nodes of graph.
+
+def dfs(visited, graph, node):  #function for dfs 
+    if node not in visited:
+        print (node)
+        visited.add(node)
+        for neighbour in graph[node]:
+            dfs(visited, graph, neighbour)
+
+# Driver Code
+print("Following is the Depth-First Search")
+dfs(visited, graph, '5')
+
+
+
+
+https://stackoverflow.com/questions/43430309/depth-first-search-dfs-code-in-python
+
+
+
+Рабочий алгоритм DFS для поиска:
+graph1 = {
+    'A': {'B', 'S'},
+    'B': {'A'},
+    'C': {'D', 'E', 'F', 'S'},
+    'D': {'C'},
+    'E': {'C', 'H'},
+    'F': {'C', 'G'},
+    'G': {'F', 'S'},
+    'H': {'E', 'G'},
+    'S': {'A', 'C', 'G'}
+}
+
+
+def dfs_path(graph, start, goal):
+    stack = [(start, [start, ])]
+    while stack:
+        (vertex, path) = stack.pop()
+        if vertex in graph.keys():
+            for next_ in graph[vertex] - set(path):
+                if next_ == goal:
+                    yield path + [next_]
+                else:
+                    stack.append((next_, path + [next_, ]))
+
+
+f = dfs_path(graph1, 'A', 'F')
+print(f.__next__())
+print(dfs_path(graph1, 'A', 'F').__next__())
