@@ -1,0 +1,63 @@
+https://docs.djangoproject.com/en/4.0/ref/contrib/messages/
+
+импортировать из:
+from django.contrib.messages.views import SuccessMessageMixin, messages
+
+Главное запомни: 
+
+1) если ты вызываешь  message в обработчике:
+
+def home_view(request):
+	...
+	messages.success(request, 'Город успешно удалён')
+	return render(...
+
+То эти сообщения передаются в контекст обработчика, где они находятся 
+в какой-то коллекции с названием messages
+Ты можешь сколько угодно вызвать 
+
+	messages.success(request, 'Город успешно удалён')
+или 
+	messages.info(request, 'Three credits remain in your account.')
+
+Они все попадут в коллекцию messages, где их можно итерировать в шаблоне:
+	
+	{% if messages %}
+        {% for message in messages %}
+
+2) если ты вызываешь messages в Class Based Views (CBV или generic views)
+
+	- 1	импортируй SuccessMessageMixin:
+
+		from django.contrib.messages.views import SuccessMessageMixin
+
+	- 2	наследуй свой generic от  миксина SuccessMessageMixin, причем он должен опережать generic:
+		
+		class CityUpdateView(SuccessMessageMixin, UpdateView):
+			...
+
+	- 3	в атрибуты класса передай переменную success_message:
+	
+		class CityUpdateView(SuccessMessageMixin, UpdateView):
+			...
+    			success_message = 'Город успешно отредактирован'
+
+Дальше django сам будет догадываться какое сообщение нужно в этом классе
+Его кстати всегда можно изменить в get_context_data(self, **kwargs)
+
+3) messages придётся отображать в шаблоне. 
+Можно для этого использовать разные инструменты, можно bootstrap, можно другое что-то
+{{ message.tags }} позволяет узнать к чему относится message (success, error и тд)
+
+В документации очень много написано и про уровни messages и как там всё настраивать и т.д.
+https://docs.djangoproject.com/en/4.0/ref/contrib/messages/
+
+В settings.py за messages отвечают:
+
+	- в MIDDLEWARE:
+		'django.contrib.messages.middleware.MessageMiddleware',
+		
+	- в context_processors (TEMPLATES)
+		'django.contrib.messages.context_processors.messages'
+
+Скорее всего именно благодаря контекстному процессору и видны все messages в шаблоне если они есть

@@ -1,0 +1,5 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/howto/outputting-pdf/
+
+	на практике
+	https://github.com/Kirill67tyar/myshop/blob/master/src/orders/views.py#L74

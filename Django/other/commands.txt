@@ -1,0 +1,34 @@
+Все команды:
+	python manage.py help
+
+
+Как выгрузить данные из базы данных (Сделать фикстуры)?
+	python manage.py dumpdata --indent <кол-во пробелов> <приложения через пробел> > <название файла>.<формат файла>
+
+К примеру:
+	python manage.py dumpdata --indent 2 cities routes trains > mydata.json
+!! проблема с кодировкой - https://habr.com/ru/post/557108/
+Вкратце - панель управления(категории) -> Изменение форматов даты, времени и чисел -> дополнительно -> 
+изменить язык системы -> поставить галочку на "Бета-версия: Использовать Юникод (UTF-8) для поддержки языка во всём мире -> перезагрузить 
+
+Как загрузить данные в бд?
+
+	python manage.py loaddata mydata.json
+
+https://docs.djangoproject.com/en/4.0/topics/testing/tools/#fixture-loading
+Также данные можно загружать и через миграции
+https://docs.djangoproject.com/en/4.0/topics/migrations/#data-migrations
+
+Указать django, какие порты и адрес использовать для запуска сервера для разработки
+или какой файл конфигурации применить, с помощью флагов (может быть полезно для docker, а конкретно для Dockerfile)
+
+	python manage.py runserver 127.0.0.1:8001 --settings=mysite.settings
+
+
+узнать, как выгдялит SQL запрос при создании таблицы от нашей модели
+очень полезно бывает, когда мы хотим посмотреть какие типы данных создадутся в таблице
+
+	наблон
+	python manage.py sqlmigrate <application name> <number of migration>
+	или так
+	python manage.py sqlmigrate blog 0001

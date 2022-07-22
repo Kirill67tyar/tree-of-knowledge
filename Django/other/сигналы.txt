@@ -1,0 +1,54 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/signals/
+	https://docs.djangoproject.com/en/4.0/ref/signals/
+
+	моё использование
+	https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/images/signals.py
+	https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/images/apps.py
+
+#                               Сигналы
+# m2m_changed - это наш сигнал
+# декоратор receiver принимает сигналы
+
+# пример использования сигналов - images.signals
+# 1) мы регистрируем функцию users_like_changed как наш подписчик с помощью декоратора receiver.
+# 2) далее мы подписываемся на сигнал m2m_changed
+# 3) обязательно регистрируем в apps.py конфиурационном класса, создав метод ready и 
+	импртировав туда файл с сигналами:
+
+	class ImagesConfig(AppConfig):
+    		default_auto_field = 'django.db.models.BigAutoField'
+    		name = 'images'
+
+    		def ready(self):
+        		import images.signals
+
+
+# сигналы в django расположены по директории django.db.models.signals
+# django предоставляет несколько сигналов для моделей:
+
+# Сигналы очень полезны, если нам надо выполнить определенную обработку
+# при наступлении определенного события
+
+# грубо говоря функция подписик декоратора receiver будет уведомлена, что
+# произошло определенное действие
+"""
+pre_init = ModelSignal(use_caching=True) - !!видимо!! перед добавлением объекта в модель
+post_init = ModelSignal(use_caching=True) - !!видимо!! после добавления объекта в модель
+pre_save = ModelSignal(use_caching=True) - перед добавленем объекта в db
+post_save = ModelSignal(use_caching=True) - после добавления объекта в db
+pre_delete = ModelSignal(use_caching=True) - перед удалением объекта в db
+post_delete = ModelSignal(use_caching=True) - перед удаления объекта в db
+m2m_changed = ModelSignal(use_caching=True) - если прокси таблица ManyToMany была изменена
+pre_migrate = Signal() - !!видимо!! перед миграциями
+post_migrate = Signal() - !!видимо!! после миграций
+"""
+# Внезапно, мы можем писать свои сигналы (сигналы - экземпляры класса ModelSignal)
+
+# Сигналы Dkango выполняются синхронно и блокируются, поэтому не нужно
+обращаться к ним в асинхронных задачах
+
+""" Своими словами: 
+сигналы нужны для чтобы выполнялось определенное действие при определенном действии в какой-то асти приложения
+пока сложно сказать насколько это нужно, но в книги советуют часто не использовать сигналы
+Во всяком случае мы могли бы сделать тоже самое в контроллере"""

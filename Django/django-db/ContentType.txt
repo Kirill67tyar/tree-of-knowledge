@@ -1,0 +1,90 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/contrib/contenttypes/
+	https://django.fun/docs/django/ru/4.0/ref/contrib/contenttypes/
+
+	использование у меня
+	https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/actions/models.py
+	https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/actions/utils.py
+
+	почему обощённые отношения лучше не использовать
+	https://djbook.ru/examples/88/
+
+
+приложение django.contrib.contenttypes щнает про все модели кстановленных приложений
+и предоставляет обощённый интерфейс для обращения к ним
+
+автоматически добавляется в INSTALLED_APPS при startproject
+используется аутентификацией и сайтом администрирования
+
+Есть модель ContentType (таблица django_content_type)
+поля:
+	id
+	app_label - приложение, к которому относится описываемая модель
+			значение автоматически предоставляется из атрибута app_label
+			класса Meta модели
+	model - model
+
+Можно получить объект ContentType соответствующий определённой модели:
+
+
+from images.utils import p_type, p_dir, p_mro
+from django.contrib.contenttypes.models import ContentType as ct
+ct.objects.all() # <QuerySet [<ContentType: admin | log entry>, <ContentType: auth | permission>,  ...
+
+ct.objects.get(app_label='images', model='image') # <ContentType: images | Изображение>
+ct_i.model_class() # <class 'images.models.Image'>
+from images.models import Image
+ct.objects.get_for_model(Image) # <ContentType: images | Изображение>
+ct.objects.get_for_model(image_instance) # <ContentType: images | Изображение>
+
+p_dir(ct_i) | p_dir(ContentType)
+'DoesNotExist',
+ 'MultipleObjectsReturned',
+ 'app_label',
+ 'app_labeled_name',
+ 'check',
+ 'clean',
+ 'clean_fields',
+ 'date_error_message',
+ 'delete',
+ 'from_db',
+ 'full_clean',
+ 'get_all_objects_for_this_type',
+ 'get_deferred_fields',
+ 'get_object_for_this_type',
+ 'id',
+ 'logentry_set',
+ 'model',
+ 'model_class',
+ 'name',
+ 'natural_key',
+ 'objects',
+ 'permission_set',
+ 'pk',
+ 'prepare_database_save',
+ 'refresh_from_db',
+ 'save',
+ 'save_base',
+ 'serializable_value',
+ 'unique_error_message',
+ 'validate_unique'
+
+
+
+На практике ContentType часто используется для обощённых отношений
+
+GenericForeignKey - поле для определения связи и управления ей
+			обращается к полям и работает в связке ContentType
+		 	(Добавление обощённых отношений)
+Для GenericForeignKey не создаёт столбец в таблице бд
+
+__init__ Для ContentType
+def __init__(
+        self, ct_field="content_type", fk_field="object_id", for_concrete_model=True
+    )
+
+GenericForeignKey используется на уровне Django, 
+специально для того чтобы получать или задавать связанные объекты
+
+Вот ещё хорошо про ContentType (моё)
+https://github.com/Kirill67tyar/education-service/blob/master/src/courses/models.py#L73

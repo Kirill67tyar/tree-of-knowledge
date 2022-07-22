@@ -1,0 +1,58 @@
+sources:
+	https://www.postgresql.org/docs/current/textsearch.html
+	
+	документация по полнотекстовому поиску Django
+	https://docs.djangoproject.com/en/4.0/ref/contrib/postgres/search/
+
+	работы postgresql с python
+	https://eax.me/python-postgresql/
+	https://khashtamov.com/ru/postgresql-python-psycopg2/
+	https://pythobyte.com/postgresql-python-3-psycopg2-ubuntu-1604/
+
+	https://djbook.ru/examples/77/ - Django+PostgreSQL за 8 шагов
+	
+	https://www.psycopg.org/docs/ - необходимо установить для работы postgresql с python
+
+	Консольный клиент psql
+	https://metanit.com/sql/postgresql/1.4.php
+
+	страница 83, книга Django
+
+	стемминг и ранжирование результатов
+	страница 87, книга Django
+	https://pythobyte.com/stemming-and-lemmatization-82464/
+	https://ida-freewares.ru/chto-takoe-stemming.html
+
+
+Модуль django.contrib.postgres предоставляет специфичную для PostgreSQL функциональность,
+которая недоступна при использовании Django с другими СУБД.
+
+
+Пример полнотекстового поиска с postgresql:
+
+	from django.contrib.postgres.search import SearchVector
+	from blog.models import Post
+
+	Post.objects.annotate(search=SearchVector('title', 'body')).filter(search='non porta') # non porta из lorem ipsum
+	# <QuerySet [<Post: ererere ererpopopop pop>, <Post: etus, eu sodales lacus>]>
+
+
+***** Стемминг и ранжирование
+
+алгоритмы стемминга позволяют получить больше совпадений при поиске
+
+ранжирование в поиске - сортировка рез-та по релевантности
+сортирует рез-т на основе того, как часто встречаются фразы поиска
+и как близко друг к другу они находятся
+
+from django.contrib.postgres.search import (
+    SearchVector,
+    SearchQuery,  # стемминг
+    SearchRank,  # ранжирование
+)
+
+
+***** поиск с помощью триграмм
+
+Есть ещё поиск с помощуью триграмм, гугли, и смотри книгу
+django, стр - 89

@@ -1,0 +1,3 @@
+!!! все настройки django хранятся в from django.conf import global_settings !!!
+
+from django.conf import global_settings

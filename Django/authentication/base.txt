@@ -1,0 +1,102 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/auth/default/
+
+	расширение User моделей
+	https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html
+	
+	встроенные обработчики для аутентификации (смены пароля и т.д.)
+	https://docs.djangoproject.com/en/4.0/topics/auth/default/
+
+	создание собственного бэкенда аутентификации
+	https://docs.djangoproject.com/en/4.0/topics/auth/customizing/
+
+
+------- в настройках
+За аутентификацию в django отвечает система,
+внесённая в INSTALLED_APPS - django.contrib.auth (создаётся автоматически)
+
+в MIDDLEWARE для аутентификации задаются два промежуточных слоя:
+
+django.contrib.auth.middleware.AuthenticationMiddleware - связывает пользователей и запросы с помощью сессий
+django.contrib.sessions.middleware.SessionMiddleware - обрабатывает сессию запроса
+
+LOGIN_REDIRECT_URL = <pathname> # куда django будет перенаправлять при успешной авторизации (если не указан GET параметр next)
+LOGIN_URL = <pathname> # при декоратре @login_required или LoginRequiredMixin - куда перенаравлять для авторизации
+LOGOUT_URL = <pathname> # адрес по которому пользователь выйдет из своего аккаунта (разорвётся сессия)
+
+------------------------------- AUTHENTICATION
+# AUTHENTICATION_BACKENDS - содержит список baskend'ов для аутентификации проекта
+# по умолчанию константа выглядит так - ['django.contrib.auth.backends.ModelBackend',]
+# ModelBackend аутентифицирует пользователей используя базовую модель User из коробки
+# мы можем добавить собственный backend для аутентификации, подключить аутентификацию извне (например LDAP)
+# более подробно про переопределение аутентификации:
+# https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#other-authentication-sources
+
+# каждый раз, когда мы аутентифицируем пользователя функцию authenticate() - Django пробует применить
+# каждый из бэкендов, указанных в AUTHENTICATION_BACKENDS по очереди, пока не дойдет до того, который успешно
+# аутентифицирует пользователя. Если не один из бэкендов не сработает то пользователя
+# не аутентифицируют
+# как реализовать свою собственную аутентификацию через email без переопределения AbstractBaseUser см. в
+# https://github.com/Kirill67tyar/bookmarks-service/tree/master/src
+# причем backend'ы будут работать не только при авторизации django из коробки,
+# но и при своей авторизации. Видимо функция authenticate() как то опирается на AUTHENTICATION_BACKENDS
+
+----- свой бэкенд
+Нужно описать класс, в котором есть два метода:
+
+authenticate() - принимает в качестве параметров объект запроса request
+	и идентификациооные данные пользователя.
+	должен возвращать объект пользователя, если данные корректны, в противном случае None
+
+get_user() - принимает id и должен вернуть соответствующий объект пользователя
+	нужен для получения нужного объекта User на протяжении всей сессии
+
+Создать свой бэкэнд - это значит создать Python-класс, который реализует эти два метода
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/accounts/authentication.py
+
+# Если в кратце:
+# 1) добавляем AUTHENTICATION_BACKENDS в settings с базовой аутентификацией
+# 2) определяем в каком-нибудь файле свою аутентификацию (authentication backend)
+# 3) эта аутентификация должна быть классом и содержать два метода authenticate() и get_user()
+# 4) в authenticate мы должны вернуть объект юзера и проверить что ему сооветствует пароль
+# с помощью функции check_password()
+# 5) добавить наш класс в AUTHENTICATION_BACKENDS и путь до него ('accounts.authentication.EmailAuthBackend')
+# 6) все это влияет в коненом счете (скорее всего!!) на функцию authenticate() from django.contrib.auth
+# скорее всего эта функция будет пробегаться по AUTHENTICATION_BACKENDS, но это не точно
+
+
+
+
+# AUTH_USER_MODEL = 'accounts.MyUser' - дает возможность использовать собственную модель Юзера
+
+Система аутентификации определяет следующие модел:
+
+User - модель пользователя с основными полями - username, password, email, first_name, last_name, is_active
+Group - модель группы пользователей
+Permission - разрешение для пользователя, или группы пользователей, ны выполнение определённых действий
+
+
+authenticate(request, email=cd['email'], ...) - проверяет идентификациооные данные, и возвращает объект User, если они корректны, 
+						иначе возвращает None (нужно вводить как username(email), так и password)
+login(request, user) - запоминает пользователя в сессии (создаёт сессионный ключ)
+
+
+встроенные обработчики для аутентификации находятся по адресу
+django.contrib.auth.views
+
+
+пример использования встроенных обработчиков для смены и восстановления пароля
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/accounts/urls.py
+
+или страница 105 django-book
+
+
+
+
+
+***** как добавить абсолтный URL к модели User
+# добавляем динамически в модель User метод get_absolute_url() - '/accounts/users/<username>/'
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda user: reverse_lazy('accounts:detail_user', kwargs={'username': user.username}),
+}
+

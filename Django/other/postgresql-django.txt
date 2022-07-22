@@ -1,0 +1,6 @@
+sources:
+	https://metanit.com/sql/postgresql/1.4.php
+
+su postgres
+createuser -dP blog
+createdb -E utf8 -U blog blog

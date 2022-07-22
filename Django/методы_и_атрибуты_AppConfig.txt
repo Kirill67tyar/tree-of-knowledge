@@ -1,0 +1,16 @@
+_is_default_auto_field_overridden
+_path_from_module
+apps
+create
+default_auto_field
+get_model
+get_models
+import_models
+label
+models
+models_module
+module
+name
+path
+ready
+verbose_name

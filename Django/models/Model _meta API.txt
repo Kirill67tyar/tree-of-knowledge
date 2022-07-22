@@ -1,0 +1,225 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/models/meta/
+
+Допустим у нас есть модель Orders (используй любую другую модель)
+
+from common.analizetools.analize import p_dir, p_mro, p_type
+p_type(Orders._meta) # <class 'django.db.models.options.Options'>
+p_mro(Orders._meta) # [<class 'django.db.models.options.Options'>, <class 'object'>]
+p_dir(Orders._meta) #  будет ниже
+
+
+['FORWARD_PROPERTIES',
+ 'REVERSE_PROPERTIES',
+ '__class__',
+ '__delattr__',
+ '__dict__',
+ '__dir__',
+ '__doc__',
+ '__eq__',
+ '__format__',
+ '__ge__',
+ '__getattribute__',
+ '__gt__',
+ '__hash__',
+ '__init__',
+ '__init_subclass__',
+ '__le__',
+ '__lt__',
+ '__module__',
+ '__ne__',
+ '__new__',
+ '__reduce__',
+ '__reduce_ex__',
+ '__repr__',
+ '__setattr__',
+ '__sizeof__',
+ '__str__',
+ '__subclasshook__',
+ '__weakref__',
+ '_expire_cache',
+ '_format_names_with_class',
+ '_forward_fields_map',
+ '_get_default_pk_class',
+ '_get_fields',
+ '_get_fields_cache',
+ '_ordering_clash',
+ '_populate_directed_relation_graph',
+ '_prepare',
+ '_property_names',
+ '_relation_tree',
+ 'abstract',
+ 'add_field',
+ 'add_manager',
+ 'app_config',
+ 'app_label',
+ 'apps',
+ 'auto_created',
+ 'auto_field',
+ 'base_manager',
+ 'base_manager_name',
+ 'can_migrate',
+ 'concrete_fields',
+ 'concrete_model',
+ 'constraints',
+ 'contribute_to_class',
+ 'db_returning_fields',
+ 'db_table',
+ 'db_tablespace',
+ 'default_apps',
+ 'default_manager',
+ 'default_manager_name',
+ 'default_permissions',
+ 'default_related_name',
+ 'fields',
+ 'fields_map',
+ 'get_ancestor_link',
+ 'get_base_chain',
+ 'get_field',
+ 'get_fields',
+ 'get_latest_by',
+ 'get_parent_list',
+ 'get_path_from_parent',
+ 'get_path_to_parent',
+ 'index_together',
+ 'indexes',
+ 'installed',
+ 'label',
+ 'label_lower',
+ 'local_concrete_fields',
+ 'local_fields',
+ 'local_managers',
+ 'local_many_to_many',
+ 'managed',
+ 'managers',
+ 'managers_map',
+ 'many_to_many',
+ 'model',
+ 'model_name',
+ 'object_name',
+ 'order_with_respect_to',
+ 'ordering',
+ 'original_attrs',
+ 'parents',
+ 'permissions',
+ 'pk',
+ 'private_fields',
+ 'proxy',
+ 'proxy_for_model',
+ 'related_fkey_lookups',
+ 'related_objects',
+ 'required_db_features',
+ 'required_db_vendor',
+ 'select_on_save',
+ 'setup_pk',
+ 'setup_proxy',
+ 'swappable',
+ 'swapped',
+ 'total_unique_constraints',
+ 'unique_together',
+ 'verbose_name',
+ 'verbose_name_plural',
+ 'verbose_name_raw']
+
+
+----------------------------------------------------------------------------------------------------------
+                        Options
+from django.db.models.options import Options
+SomeModel._meta - получишь класс экземпляр класса Options этой модели
+Очень интересный класс Options. Посмотри на аттрибуты экземпляра, которые создаются в конструкторе
+self от Options потом сможет работать с этими аттрибутами (аттрибуты экземпляра класса)
+Выглядит так, что он схож с ContentType
+Но отличий очень много:
+-- Options не имеет таблицы в db
+-- Мета данные, которые мы можем получить в Options - более подробные чем в ContentType (посмотри в конструктор)
+-- Если нет своей таблицы в бд, то это означает, что данные хранятся в оперативной памяти
+а это означает что данные генерируются каждый раз заново, когда мы работаем с Options
+Получается что класс Options - читает модель с которой работает
+Методов у Options тоже очень много и многие из них крутые
+есть метод get_fields() - где ты получаешь кастомный список django
+состоящий из полей этой модели
+Кстати не забывай - что поля модели это тоже классы python со своими методами и аттрибуами
+from django.db.models.fields import related
+from django.db.models import fields
+from django.db.models import ManyToOneRel
+Вот аттрибуты и методы поля ManyToOne (ForeignKey для зависимой модели):
+auto_created
+concrete
+db_type
+delete_cached_value
+editable
+empty_strings_allowed
+field
+field_name
+get_accessor_name
+get_cache_name
+get_cached_value
+get_choices
+get_extra_restriction
+get_internal_type
+get_joining_columns
+get_lookup
+get_path_info
+get_related_field
+hidden
+identity
+is_cached
+is_hidden
+is_relation
+limit_choices_to
+many_to_many
+many_to_one
+model
+multiple
+name -- дает название поля (как он назван в модели). Аттрибут
+null
+on_delete
+one_to_many
+one_to_one
+parent_link
+related_model
+related_name
+related_query_name
+remote_field
+set_cached_value
+set_field_name
+symmetrical
+target_field
+Работать с полями модели можно по полной программе.
+Очень хороший пример работы с Options и полями модели (а также просто с админкой) -
+- смотри в файле orders/admin.py
+Options - это отличный класс для работы с meta-data модели, которые не хранятся в db
+Вот что написано в конструкторе Options:
+# For any class that is a proxy (including automatically created
+# classes for deferred (отложенный) object loading), proxy_for_model tells us
+# which class this model is proxying. Note that proxy_for_model
+# can create a chain of proxy models. For non-proxy models, the
+# variable (переменная) is always None.
+# For any non-abstract class, the concrete class is the model
+# in the end of the proxy_for_model chain. In particular, for
+# concrete models, the concrete_model is always the class itself.
+# List of all lookups defined in ForeignKey 'limit_choices_to' options
+# from *other* models. Needed for some admin checks. Internal use only.
+# A custom app registry to use, if you're making a separate model set.
+Кстати, класс Options доступен не только для классов моделей (заимствованных от Model)
+но и от ModelForm, а возможно даже и от Form
+Имхо - Options дает возможность сделать наш код универсальным при работе с моделями,
+а не работать нам с конкретно какой-то моделью
+смотри на функцию export_to_csv (from orders.admin import export_to_csv)
+Отличный пример работы с Options
+Да и сам Options переводится как "опции" что хорошо соответствует функции этого класса
+Через класс Options можно вызвать класс app_config. Собственно у класса Options какой либо модели есть
+атрибут app_config, и через него будет доступен конфигурационный класс нашего приложения
+вспоминаем apps.py:
+# При создании приложения! django создает определяет конфигурационный класс
+# при создании приложения создается файл apps.py где описан базовый конфигурационный класс
+# он унаследован от AppConfig - эти классы позволяют нам хранить методанные приложения
+# и предоставляют нам интроспекцию
+# https://docs.djangoproject.com/en/3.2/ref/applications/
+# Интроспекция (англ. type introspection) в программировании — возможность запросить тип
+# и структуру объекта во время выполнения программы.
+# метод ready() - вызывается сразу как только заполнен реестр приложения
+# любая логика связанная с инициализацией нашего приложения должна быть объяснена в этом методе
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/accounts/draft.py
+Таким образом, можно заключить что Options тоже предоставляет нам возможность интроспецкии (как и AppConfig),
+но только не приложения, а модели (и довольно широкую интропекцию)

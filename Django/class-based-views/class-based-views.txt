@@ -1,0 +1,35 @@
+-*sources:
+	Generic display views (detail, list):
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-display/
+
+	Generic editing views (create, update, delete, form):
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-editing/
+
+	https://docs.djangoproject.com/en/4.0/topics/class-based-views/intro/
+	https://docs.djangoproject.com/en/4.0/topics/class-based-views/
+
+В ссылках выше указаны методы, которые используются в этих классах.
+Если говорить об атрибутах, то
+
+	object - 1 объект
+	object_list - много объектов
+	НО!
+	page_obj - если используешь пагинацию (присваиваешь paginate_by)
+
+
+1) Все class-based-views унаследованы от базового класса View
+2) есть generic classes (общие классы), они подразделяются:
+
+	Generic display views - DetailView, ListView
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-display/
+
+	Generic editing views - FormView, CreateView, UpdateView, DeleteView
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-editing/
+
+	Generic date views - ArchiveIndexView, YearArchiveView, MonthArchiveView, 
+				WeekArchiveView, DayArchiveView, TodayArchiveView, DateDetailView
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-date-based/
+
+3) есть ещё также миксины mixins (миксины, примеси)
+	https://docs.djangoproject.com/en/4.0/ref/class-based-views/mixins/
+	https://docs.djangoproject.com/en/4.0/topics/class-based-views/mixins/

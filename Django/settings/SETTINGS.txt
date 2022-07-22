@@ -1,0 +1,202 @@
+#======================================== SETTINGS =================================================================
+
+https://docs.djangoproject.com/en/3.2/ref/settings/
+
+# !!! все настройки django хранятся в from django.conf import global_settings !!!
+
+# Если импортировать settings то:
+# from django.conf import settings
+
+# в settings используются в основном константы, и часто эти константы из проекта в проект одни и те же
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR  - локация, или базовая директория, которая указывает на корень нашего проекта, 
+где лежит файл manage.py
+С помощью этой переменной происходит определения расположения, того или иного файла
+
+
+#  STATIC--------
+# (уже есть) BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+# # константа BASE_DIR - ведет в корень проекта, корнем считается папка mysite (ну очевидно какая именно)
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_ROOT - указывает путь к папке, в которой будут храниться
+# #                                              все статические файлы
+# #                                              суть этой команды - собрать всю статику со всего приложения - в единое место
+# #                                              происходит это уже на боевом сервере
+#                                                используется комманда python manage.py collectstatic
+
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'mysite/static'),
+# ]
+# если статика где-то еще лежит, в STATICFILES_DIRS можно указать пути, от куда django будет забирать статику
+# и собирать ее на одном уровне 'static', а не 'mysite/static', где настройки
+
+# консольная команда python manage.py collectstatic собирает всю статику с приложения
+# после этой команды появляется папка static  в корне проекта, куда скопированы вся статика проекта
+# если что-то непонятно про подключение статики - пересмотри 22-й урок подробных курсов про джанго
+
+
+# TEMPLATES---------
+
+# TEMPLATES = [
+#     {
+#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+#         'DIRS': [
+#             os.path.join(BASE_DIR, 'templates')
+#         ],# в этой конфигурации прописано, где django должен искать шаблоны
+#
+#         'APP_DIRS': True,
+#         'OPTIONS': {
+#             'context_processors': [
+#                 'django.template.context_processors.debug',
+#                 'django.template.context_processors.request',
+#                 'django.contrib.auth.context_processors.auth',
+#                 'django.contrib.messages.context_processors.messages',
+#             ],
+#         },
+#     },
+# ]
+
+# В ключе DIRS мы прописываем os.path.join(BASE_DIR, 'templates') (нужно создать папку templates)
+# os.path.join() - соединяет пути, а именно нашу корневую папку BASE_DIR и название другой папки
+
+
+## -------------------------------------- MEDIA
+
+## базовый url от которого будет формироваться адреса файлов.
+# MEDIA_URL = '/media/'
+
+## путь в файловой системе, где эти файлы будут храниться
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+## -------------------------------------- MEDIA
+
+
+# django умеет обрабатывать статику, умеет обрабатывать выгруженные файлы, но все это в режиме дебага
+# Поэтому в url прописываем:
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# таким образом мы указываем где django брать выгруженные файлы
+# Что в данном случае делать на боевом сервере я хз
+# Никода не используй это в режиме production
+## -------------------------------------- MEDIA
+
+
+# CACHES-----------
+
+# для файлового кэширования
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': os.path.join(BASE_DIR, 'django_caches'),
+#     }
+# }
+# а вообще любое (или почти любое) кэширование требует каких-то дополнительных настроек
+# которые можно посмотреть в doc
+
+
+# MIDDLEWARE------------
+
+# 'django.contrib.auth.middleware.AuthenticationMiddleware' - связывает пользователей и запросы с помощью сессий
+# 'django.contrib.sessions.middleware.SessionMiddleware' - обрабатывает сессии запроса
+
+# промежутоный слой - это класс с методами, которые выполняются каждый раз при
+# обработке запроса (http request) и при формировании ответа (http response)
+# собственно MIDDLEWARE в django settings это list таких классов, промежуточных слоев
+# лаконично - список подключенных промежуточных слоев.
+Обрабатывают запрос и ответ в той последовательности, как они указаны 
+(для request сверху вниз, для response снизу вверх)
+Каждый из этих слоёв или проверяет запрос/ответ, или его как-то дополняет.
+Монж создать свой промежуточный слой, который будет или проверять или дополнять запрос
+# MIDDLEWARE = [
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+# ]
+django.contrib.auth.middleware.AuthenticationMiddleware - связывает пользователей и запросы с помощью сессий
+django.contrib.sessions.middleware.SessionMiddleware - обрабатывает сессию запроса
+
+# TEMPLATES------------
+# в ключе OPTIONS лежит словарь где есть ключ 'context_processors'
+# эти контекстные процессоры отвечают за добавление переменных в контекст, которые потом пойдут в шаблон
+# django.contrib.messages.context_processors.messages будет автоматически добалять messages в контекст
+"""
+'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+"""
+
+------------------------------- AUTHENTICATION
+# AUTHENTICATION_BACKENDS - содержит список baskend'ов для аутентификации проекта
+# по умолчанию константа выглядит так - ['django.contrib.auth.backends.ModelBackend',]
+# ModelBackend аутентифицирует пользователей используя базовую модель User из коробки
+# мы можем добавить собственный backend для аутентификации, подключить аутентификацию извне (например LDAP)
+# более подробно про переопределение аутентификации:
+# https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#other-authentication-sources
+
+# каждый раз, когда мы аутентифицируем пользователя функцию authenticate() - Django пробует применить
+# каждый из бэкендов, указанных в AUTHENTICATION_BACKENDS по очереди, пока не дойдет до того, который успешно
+# аутентифицирует пользователя. Если не один из бэкендов не сработает то пользователя
+# не аутентифицируют
+# как реализовать свою собственную аутентификацию через email без переопределения AbstractBaseUser см. в
+# https://github.com/Kirill67tyar/bookmarks-service/tree/master/src
+# причем backend'ы будут работать не только при авторизации django из коробки,
+# но и при своей авторизации. Видимо функция authenticate() как то опирается на AUTHENTICATION_BACKENDS
+
+# AUTH_USER_MODEL = 'accounts.MyUser' - дает возможность использовать собственную модель Юзера
+
+# ---------- LOGIN
+LOGIN_REDIRECT_URL = <pathname> # куда django будет перенаправлять при успешной авторизации (если не указан GET параметр next)
+LOGIN_URL = <pathname> # при декоратре @login_required или LoginRequiredMixin - куда перенаравлять для авторизации
+LOGOUT_URL = <pathname> # адрес по которому пользователь выйдет из своего аккаунта (разорвётся сессия)
+
+
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', ...]
+# django проверяет домены перечисленные в ALLOWED_HOSTS
+# это мера предосторожности для предотвращения атак HTTP-headers
+# Список строк, представляющих имена хостов/доменов, которые может обслуживать этот сайт Django.
+# Это мера безопасности для предотвращения атак заголовков узлов HTTP, которые возможны даже при многих,
+# казалось бы, безопасных конфигурациях веб-серверов.
+
+
+
+
+
+# Динамическое добавление absolute_url к модели, через настройки (полезно для User)
+# добавляем динамически в модель User метод get_absolute_url() - '/accounts/users/<username>/'
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda user: reverse_lazy('accounts:detail_user', kwargs={'username': user.username}),
+}
+
+
+
+
+
+# ----------------------- internationalization
+
+# https://docs.djangoproject.com/en/4.0/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+# если зайти в django.conf.settings а от туда в global_settings
+
+USE_I18N = True
+
+USE_TZ = True # Django использует настройку USE_TZ, для поддержки временных зон по умолчанию USE_TZ = True
+
+# !!! если зайти в django.conf.settings а от туда в global_settings
+# или сразу в from django.conf import global_settings
+# то там будет константа - TIME_ZONE = "America/Chicago"
+
+#======================================== SETTINGS =================================================================

@@ -1,0 +1,124 @@
+sources:
+	doc:
+	https://docs.djangoproject.com/en/4.0/topics/auth/default/#groups
+	https://docs.djangoproject.com/en/4.0/topics/auth/default/#permissions-and-authorization
+
+	создание своих разрешений
+	https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#custom-permissions
+
+
+В подсистему аутентификаций Django включена истема разрешений, которая позволяет
+администратору создать группы пользователей и ограничения на доступ к тем или иным действиям
+
+Обрати внимание, что в бд django есть следующие таблицы:
+
+auth_group
+	id - INTEGER
+	name - VARCHAR(150)
+
+auth_group_permissions
+	id - INTEGER
+	group_id - INTEGER внешний ключ на auth_group
+	permission_id - INTEGER внешний ключ на auth_permission
+
+	index
+	auth_group_permissions_group_id_vcx213d
+	auth_group_permissions_group_id_permission_id_123asdac3_uniq
+	auth_group_permissions_permission_id_asd3412asd
+
+auth_permission
+	id - INTEGER
+	content_type_id - INTEGER внешний ключ на django_content_type
+	codename - VARCHAR(150) (при этом скорее всего есть db_index за этим полем)
+	name - VARCHAR(255)
+
+	index
+	auth_permission_content_type_id_312jn12
+	auth_permission_content_type_id_codename_312jn12_uniq
+
+
+auth_user
+	id - INTEGER
+	password - VARCHAR(128)
+	username - VARCHAR(150)
+	last_name - VARCHAR(150)
+	email - VARCHAR(254)
+	first_name - VARCHAR(150)
+	is_superuser - BOOL
+	is_staff - BOOL
+	is_active - BOOL
+	last_login - DATETIME - скорее всего когда в последний раз создавался сессионный ключ
+	date_joined - DATETIME - скорее всего когда создадалсь запись в бд, аналог DateTimeField(auto_now_add=True)
+
+auth_user_groups
+	id - INTEGER
+	user_id - INTEGER внешний ключ на auth_user (есть db_index)
+	group_id - INTEGER скорее всего внешний ключ на auth_group (есть db_index)
+	
+	index
+	auth_user_groups_group_id_89465
+	auth_user_groups_user_id_32ij123o
+	auth_user_groups_user_id_group_id_321fsd85_uniq
+
+auth_user_user_permissions
+	id - INTEGER
+	user_id - INTEGER внешний ключ на auth_user (есть db_index)
+	permission_id - INTEGER внешний ключ на auth_permission
+
+	index
+	auth_user_user_permissions_permission_id_321sad2
+	auth_user_user_permissions_user_id_sd432fsd
+	auth_user_user_permissions_user_id_permission_id_sd432fsd
+
+Также сессионный ключ для юзера хранится в таблице django_session 
+и скорее всего его можно переопределить, чтобы он харнился в кэше или redis
+
+Создать группу
+http://127.0.0.1:8000/admin/auth/group/add/
+
+ты увидишь, что из левого поля можно перетаскивать с помощью стрелоки 
+разрешения в правое поле
+Тут все таблицы, которые есть в бд, как от Django, так и те что мы создали
+Для каждой таблицы есть  4 права доступа - can add, can change, can delete, can view
+согласно CRUD функционалу. 
+И вот можно придумать имя для группы, обозначить в провом поле разрешения
+для нужных таблиц, передвинув их из левой таблицы
+ихранить, и у нас появится новая группа.
+Загляни в бд и посмотри какие записи добавились в таблицы, означенные выше
+Изучи эти таблицы, там всё довольно понятно
+
+Разрешения группы распространяются на всех пользователей, состоящих в ней.
+Но Django позволяет выдавать их индивидуально, т.е. для каждого пользователя.
+Это можно сделать и через сайт администрирования.
+Если пользователь is_superuser=True то система Django даст доступ такому
+пользователю ко всем возмлжностям системы, несмотря на его связи с группами
+
+--- Доступ к обработчикам
+Если ты хочешь чтобы обработчик работал для пользователей с допуском (permission)
+которые состоят в группе, то для класса нужно добавить PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+а для функции обработчика permission_required
+from django.contrib.auth.decorators import permission_required
+
+Он наследуется совместно с class-based-view и должен добавляться в начало при наследовании классов
+
+	class MyCreateView(PermissionRequiredMixin, CreateView):
+		permission_required = 'courses.add_course'
+
+
+Нужно добавить атрибут permission_required
+для CreateView - permission_required = 'courses.add_course'
+для UpdateView - permission_required = 'courses.change_course'
+для DeleteView - permission_required = 'courses.delete_course'
+
+т.е. permission_required = '<application_name>.<add|change|delete>_<model>
+
+PermissionRequiredMixin проверяет наличие у пользователя разрешения,
+указанного в атрибуте permission_required
+
+
+
+Короче смотри тут
+https://github.com/Kirill67tyar/education-service/blob/master/src/courses/views.py
+

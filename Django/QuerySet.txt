@@ -1,0 +1,385 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/models/querysets/
+
+
+Исполнение SQL запроса начнётся тогда, когда запустится вычисления QuerySet'а
+QuerySet у нас ленивый
+SQL запрос выполняется:
+- первая итерация по коллекции QuerySet'a
+- когда мы делаем срез по коллекции (Book.objects.all()[:5])
+- при сериализации или кешировании
+- при вызове метода repr() или len()
+- когда мы явно вызываем функцию list(), передавая её аргументом QuerySet
+- при использовании QuerySet в логических выражениях (bool, and, or, not)
+
+Разумеется QS итерируемый объект
+когда мы вызываем метод __iter__()
+То QS преобразуется в <list_iterator object at 0x00000277EF19D1C0>
+
+------- Методы/атрибуты QuerySet:
+__and__
+__bool__
+__class__
+__class_getitem__
+__deepcopy__
+__delattr__
+__dict__
+__dir__
+__doc__
+__eq__
+__format__
+__ge__
+__getattribute__
+__getitem__
+__getstate__
+__gt__
+__hash__
+__init__
+__init_subclass__
+__iter__
+__le__
+__len__
+__lt__
+__module__
+__ne__
+__new__
+__or__
+__reduce__
+__reduce_ex__
+__repr__
+__setattr__
+__setstate__
+__sizeof__
+__str__
+__subclasshook__
+__weakref__
+_add_hints
+_annotate
+_batched_insert
+_chain
+_clone
+_combinator_query
+_earliest
+_extract_model_params
+_fetch_all
+_filter_or_exclude
+_filter_or_exclude_inplace
+_has_filters
+_insert
+_iterator
+_merge_known_related_objects
+_merge_sanity_check
+_next_is_sticky
+_not_support_combined_queries
+_prefetch_related_objects
+_prepare_for_bulk_create
+_raw_delete
+_update
+_validate_values_are_expressions
+_values
+aggregate
+alias
+all
+annotate
+as_manager
+bulk_create ----------- пример использования ниже
+bulk_update
+complex_filter
+count
+create
+dates
+datetimes
+db
+defer
+delete
+difference
+distinct
+earliest
+exclude
+exists
+explain
+extra
+filter
+first
+get
+get_or_create
+in_bulk ----------- пример использования ниже
+intersection
+iterator
+last
+latest
+none
+only
+order_by
+ordered
+prefetch_related--пример использования ниже
+query ------------отображает SQL запрос в БД, который делался, для этого queryset (<property object at 0x000001D5CE392590>)
+raw
+resolve_expression
+reverse
+select_for_update
+select_related----пример использования ниже
+union
+update
+update_or_create
+using
+values
+values_list
+
+
+*** in_bulk 
+
+in_bulk(id_list=None, *, field_name='pk')
+из готового QuerySet делает словарь где ключ pk а значение экземпляр модели. 
+Принимает в качестве аргумента список с id или аргумент field_name, 
+по которому создавать ключ в словаре. 
+Вроде как не вызывает исключений, хотя надо проверить
+
+Пример использования:
+
+	>>> Blog.objects.in_bulk([1])
+	{1: <Blog: Beatles Blog>}
+	>>> Blog.objects.in_bulk([1, 2])
+	{1: <Blog: Beatles Blog>, 2: <Blog: Cheddar Talk>}
+	>>> Blog.objects.in_bulk([])
+	{}
+	>>> Blog.objects.in_bulk()
+	{1: <Blog: Beatles Blog>, 2: <Blog: Cheddar Talk>, 3: <Blog: Django Weblog>}
+	>>> Blog.objects.in_bulk(['beatles_blog'], field_name='slug')
+	{'beatles_blog': <Blog: Beatles Blog>}
+	>>> Blog.objects.distinct('name').in_bulk(field_name='name')
+	{'Beatles Blog': <Blog: Beatles Blog>, 'Cheddar Talk': <Blog: Cheddar Talk>, 'Django Weblog': <Blog: Django Weblog>}
+
+*** in_bulk 
+
+
+
+*** select_related И prefetch_related:
+
+Если вкратце то:
+
+	select_related - для многие к одному (из дочерней модели), и использует INNER JOIN
+
+	prefetch_related - для многие ко многим и тоже может использовать дочернюю модель
+
+
+Есть такая проблема при работе с ORM как N+1 запросы
+select_related решает эту проблему
+Как он работает?
+Допустим у нас есть модель Train с внешними ключами (многие к одному)
+
+Запрос в бд для такой модели при Train.objects.all() будет:
+
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+	"trains_train"."from_city_id", "trains_train"."to_city_id", 
+	"trains_train"."departure_time", "trains_train"."arrival_time" 
+
+Где "trains_train"."from_city_id", "trains_train"."to_city_id" - внешние ключи
+к таблице "cities_city" (модель City)
+Но в queryset нам будут помимо внешних ключей к модели City доступны также
+и экземпляры этой модели, к которыми экземпляры модели Train привязаны
+
+И вот допустим при коде:
+	
+	for train in Train.objects.all():
+		train.city.name
+
+мы с каждой итерацией будем делать запрос в бд для для таблицы City, чтобы достать name
+это неудобно.
+select_related позволяет решить эту проблему
+
+при Train.objects.all().select_related('from_city', 'to_city')
+наш sql запрос будет выглядить так:
+	
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+	"trains_train"."from_city_id", "trains_train"."to_city_id", 
+	"trains_train"."departure_time", "trains_train"."arrival_time", 
+	"cities_city"."id", "cities_city"."name", T3."id", T3."name" 
+	FROM "trains_train" 
+	INNER JOIN "cities_city" ON ("trains_train"."from_city_id" = "cities_city"."id") 
+	INNER JOIN "cities_city" T3 ON ("trains_train"."to_city_id" = T3."id") 
+	ORDER BY "trains_train"."travel_time" ASC
+
+первый запрос будет больше чем просто обращение к all()
+но зато при таком коде
+	
+	trains = Train.objects.all().select_related('from_city', 'to_city')
+	for t in trains:
+		t.city.name
+
+мы не будем делать дополнительные запросы к таблицу cities_city (модель City)
+
+проверь, если хочешь, с помощью connection.queries (см. tree-of-knowledge/Django/django-db/connection.txt)
+
+* prefetch_related:
+Главное помни, City это родительская модель, а Train дочерняя 
+это работает если select_related сделать из дочерней модели, 
+где прописаны внешнии ключи к родительской модели
+если наоборот нам нужно получить все экземпляры из родительской модели (Один ко многим),
+к которой будут привязаны все дочерние экземпляры (обратная ситуация описанная выше)
+следует использовать prefetch_related
+
+Насчет many2many и one2one не факт что это будет работать (не знаю)
+
+* Важный момент, когда мы вызываем values() где передаем в качестве аргумента, 
+внешний ключ на родительскую модель таким образом 'from_city__name'
+мы уже делаем INNER JOIN будет делаться автоматически,
+и эта values будет работать тоже как select_related, но
+даст словарь в queryset'е:
+	
+	Train.objects.values('id', 'name', 'travel_time', 'from_city_id', 'to_city_id', 
+				'from_city__name', 'to_city__name')
+
+	и 
+
+	Train.objects.select_related('to_city', 'from_city').values('id', 'name', 'travel_time', 
+				'from_city_id', 'to_city_id', 'from_city__name', 'to_city__name')
+
+дадут одинаковые SQL запросу в бд:
+	
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+		"trains_train"."from_city_id", "trains_train"."to_city_id", 
+		"cities_city"."name", T3."name" 
+	FROM "trains_train" 
+	INNER JOIN "cities_city" ON ("trains_train"."from_city_id" = "cities_city"."id") 
+	INNER JOIN "cities_city" T3 ON ("trains_train"."to_city_id" = T3."id") 
+	ORDER BY "trains_train"."travel_time" ASC
+
+
+select_related оптимизирует запросы для таблицы со связью многие к одному
+
+
+Image.objects.all()
+{'sql': 'SELECT "images_image"."id", "images_image"."owner_id", "images_image"."title", "images_image"."slug", "images_image"."url", "images_image"."image", "images_image"."description
+", "images_image"."created" FROM "images_image" ORDER BY "images_image"."created" DESC LIMIT 21', 'time': '0.000'}
+
+
+Image.objects.all().select_related('owner')
+{'sql': 'SELECT "images_image"."id", "images_image"."owner_id", "images_image"."title", "images_image"."slug", "images_image"."url", "images_image"."image", "images_image"."description
+", "images_image"."created", "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_use
+r"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "images_image" INNER JOIN "auth_user" ON ("images_image"."owner_id"
+ = "auth_user"."id") ORDER BY "images_image"."created" DESC LIMIT 21', 'time': '0.000'}
+
+
+
+*** bulk_create
+>>> objs = Entry.objects.bulk_create([
+...     Entry(headline='This is a test'),
+...     Entry(headline='This is only a test'),
+... ])
+
+*** bulk_create
+
+
+*** сохранение в БД
+
+Два способа сохранения данных модели в бд:
+
+1) 
+new_note = Book(author='some author', title='some title' ...)
+new_note.save()
+
+2)Book.objects.create(author='some author', title='some title' ...)
+
+Оба способа формируют SQL запрос INSERT в бд
+
+НО! если мы изменяем уже существующую запись, 
+то метод save() будет делать SQL запрос UPDATE
+
+
+
+
+
+
+
+
+------- pprint.pprint(dict(QuerySet.__dict__)):
+
+{'__and__': <function QuerySet.__and__ at 0x000001D5CE397280>,
+ '__bool__': <function QuerySet.__bool__ at 0x000001D5CE3970D0>,
+ '__class_getitem__': <classmethod object at 0x000001D5CE38BE80>,
+ '__deepcopy__': <function QuerySet.__deepcopy__ at 0x000001D5CE385D30>,
+ '__dict__': <attribute '__dict__' of 'QuerySet' objects>,
+ '__doc__': 'Represent a lazy database lookup for a set of objects.',
+ '__getitem__': <function QuerySet.__getitem__ at 0x000001D5CE397160>,
+ '__getstate__': <function QuerySet.__getstate__ at 0x000001D5CE385DC0>,
+ '__init__': <function QuerySet.__init__ at 0x000001D5CE385AF0>,
+ '__iter__': <function QuerySet.__iter__ at 0x000001D5CE397040>,
+ '__len__': <function QuerySet.__len__ at 0x000001D5CE385F70>,
+ '__module__': 'django.db.models.query',
+ '__or__': <function QuerySet.__or__ at 0x000001D5CE397310>,
+ '__repr__': <function QuerySet.__repr__ at 0x000001D5CE385EE0>,
+ '__setstate__': <function QuerySet.__setstate__ at 0x000001D5CE385E50>,
+ '__weakref__': <attribute '__weakref__' of 'QuerySet' objects>,
+ '_add_hints': <function QuerySet._add_hints at 0x000001D5CE399940>,
+ '_annotate': <function QuerySet._annotate at 0x000001D5CE398E50>,
+ '_batched_insert': <function QuerySet._batched_insert at 0x000001D5CE3994C0>,
+ '_chain': <function QuerySet._chain at 0x000001D5CE399550>,
+ '_clone': <function QuerySet._clone at 0x000001D5CE3995E0>,
+ '_combinator_query': <function QuerySet._combinator_query at 0x000001D5CE398940>,
+ '_earliest': <function QuerySet._earliest at 0x000001D5CE397A60>,
+ '_extract_model_params': <function QuerySet._extract_model_params at 0x000001D5CE3979D0>,
+ '_fetch_all': <function QuerySet._fetch_all at 0x000001D5CE399670>,
+ '_filter_or_exclude': <function QuerySet._filter_or_exclude at 0x000001D5CE398790>,
+ '_filter_or_exclude_inplace': <function QuerySet._filter_or_exclude_inplace at 0x000001D5CE398820>,
+ '_has_filters': <function QuerySet._has_filters at 0x000001D5CE3999D0>,
+ '_insert': <function QuerySet._insert at 0x000001D5CE399430>,
+ '_iterator': <function QuerySet._iterator at 0x000001D5CE3973A0>,
+ '_merge_known_related_objects': <function QuerySet._merge_known_related_objects at 0x000001D5CE399820>,
+ '_merge_sanity_check': <function QuerySet._merge_sanity_check at 0x000001D5CE399790>,
+ '_next_is_sticky': <function QuerySet._next_is_sticky at 0x000001D5CE399700>,
+ '_not_support_combined_queries': <function QuerySet._not_support_combined_queries at 0x000001D5CE399AF0>,
+ '_prefetch_related_objects': <function QuerySet._prefetch_related_objects at 0x000001D5CE3980D0>,
+ '_prepare_for_bulk_create': <function QuerySet._prepare_for_bulk_create at 0x000001D5CE397700>,
+ '_raw_delete': <function QuerySet._raw_delete at 0x000001D5CE397E50>,
+ '_update': <function QuerySet._update at 0x000001D5CE397F70>,
+ '_validate_values_are_expressions': <staticmethod object at 0x000001D5CE38BE50>,
+ '_values': <function QuerySet._values at 0x000001D5CE398280>,
+ 'aggregate': <function QuerySet.aggregate at 0x000001D5CE3974C0>,
+ 'alias': <function QuerySet.alias at 0x000001D5CE398DC0>,
+ 'all': <function QuerySet.all at 0x000001D5CE3985E0>,
+ 'annotate': <function QuerySet.annotate at 0x000001D5CE398D30>,
+ 'as_manager': <classmethod object at 0x000001D5CE38BE20>,
+ 'bulk_create': <function QuerySet.bulk_create at 0x000001D5CE397790>,
+ 'bulk_update': <function QuerySet.bulk_update at 0x000001D5CE397820>,
+ 'complex_filter': <function QuerySet.complex_filter at 0x000001D5CE3988B0>,
+ 'count': <function QuerySet.count at 0x000001D5CE397550>,
+ 'create': <function QuerySet.create at 0x000001D5CE397670>,
+ 'dates': <function QuerySet.dates at 0x000001D5CE398430>,
+ 'datetimes': <function QuerySet.datetimes at 0x000001D5CE3984C0>,
+ 'db': <property object at 0x000001D5CE3924F0>,
+ 'defer': <function QuerySet.defer at 0x000001D5CE399160>,
+ 'delete': <function QuerySet.delete at 0x000001D5CE397DC0>,
+ 'difference': <function QuerySet.difference at 0x000001D5CE398AF0>,
+ 'distinct': <function QuerySet.distinct at 0x000001D5CE398F70>,
+ 'earliest': <function QuerySet.earliest at 0x000001D5CE397AF0>,
+ 'exclude': <function QuerySet.exclude at 0x000001D5CE398700>,
+ 'exists': <function QuerySet.exists at 0x000001D5CE398040>,
+ 'explain': <function QuerySet.explain at 0x000001D5CE398160>,
+ 'extra': <function QuerySet.extra at 0x000001D5CE399040>,
+ 'filter': <function QuerySet.filter at 0x000001D5CE398670>,
+ 'first': <function QuerySet.first at 0x000001D5CE397C10>,
+ 'get': <function QuerySet.get at 0x000001D5CE3975E0>,
+ 'get_or_create': <function QuerySet.get_or_create at 0x000001D5CE3978B0>,
+ 'in_bulk': <function QuerySet.in_bulk at 0x000001D5CE397D30>,
+ 'intersection': <function QuerySet.intersection at 0x000001D5CE398A60>,
+ 'iterator': <function QuerySet.iterator at 0x000001D5CE397430>,
+ 'last': <function QuerySet.last at 0x000001D5CE397CA0>,
+ 'latest': <function QuerySet.latest at 0x000001D5CE397B80>,
+ 'none': <function QuerySet.none at 0x000001D5CE398550>,
+ 'only': <function QuerySet.only at 0x000001D5CE3991F0>,
+ 'order_by': <function QuerySet.order_by at 0x000001D5CE398EE0>,
+ 'ordered': <property object at 0x000001D5CE3924A0>,
+ 'prefetch_related': <function QuerySet.prefetch_related at 0x000001D5CE398CA0>,
+ 'query': <property object at 0x000001D5CE392590>,
+ 'raw': <function QuerySet.raw at 0x000001D5CE3981F0>,
+ 'resolve_expression': <function QuerySet.resolve_expression at 0x000001D5CE3998B0>,
+ 'reverse': <function QuerySet.reverse at 0x000001D5CE3990D0>,
+ 'select_for_update': <function QuerySet.select_for_update at 0x000001D5CE398B80>,
+ 'select_related': <function QuerySet.select_related at 0x000001D5CE398C10>,
+ 'union': <function QuerySet.union at 0x000001D5CE3989D0>,
+ 'update': <function QuerySet.update at 0x000001D5CE397EE0>,
+ 'update_or_create': <function QuerySet.update_or_create at 0x000001D5CE397940>,
+ 'using': <function QuerySet.using at 0x000001D5CE399280>,
+ 'values': <function QuerySet.values at 0x000001D5CE398310>,
+ 'values_list': <function QuerySet.values_list at 0x000001D5CE3983A0>}

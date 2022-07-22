@@ -1,0 +1,18 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/forms/
+
+
+Если надо распокавать форму не полностью (допустим без тега label), то:
+
+{% for field in form %}
+    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+{% endfor %}
+
+и вообще, смотри документацию (https://docs.djangoproject.com/en/4.0/topics/forms/#looping-over-the-form-s-fields)
+с формой можно работать намного сложнее чем as_p или ul

@@ -1,0 +1,6 @@
+sources:
+	doc
+	https://docs.djangoproject.com/en/3.2/howto/custom-model-fields/
+	
+	моё
+	https://github.com/Kirill67tyar/education-service/blob/master/src/courses/fields.py

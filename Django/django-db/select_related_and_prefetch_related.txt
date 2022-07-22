@@ -1,0 +1,166 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/models/querysets/#select-related
+	https://docs.djangoproject.com/en/4.0/ref/models/querysets/#prefetch-related
+	https://django.fun/tutorials/select_related-i-prefetch_related-v-django/ 
+
+
+---------------------------------------------------------------------------------------------
+Если вкратце то:
+
+	select_related:
+
+		доступна
+		 - многие к одному (из дочерней модели) - использует INNER JOIN
+		 - один к одному - использует LEFT OUTER JOIN или INNER JOIN
+
+		не доступна
+		 - для один ко многим - не доступна (из главной модели)
+		 - для многие ко многим - не доступна
+		 
+
+	prefetch_related:
+
+		пригодна
+		 - для многие ко многим - делает два SQL запроса, 
+					связывет их в оперативной памяти
+					второй SQL запрос на прокси таблицу с 
+					внешними ключами (многие ко многим)
+					и в ней он использует INNER JOIN
+		 - для один к одному - делает 2 SQL запроса и связывает их в оперативной памяти
+		 - для один ко многим (из главной модели) - делает два SQL запроса и связывает их
+
+		непригодна
+		 - многие к одному (из дочерней модели) - делает два SQL запроса, 
+						причём второй только для первой 
+						записи из первого запроса (WHERE id IN (1))
+
+---------------------------------------------------------------------------------------------
+
+
+
+
+select_related
+# select_related() - позволяет полуить объекты связнные Один ко Многим, и Один к Одному
+# запрос полуится чуть более сложным, но позволит избежать многократного обращения к бд
+# для доступа к связанным объектам.
+# Вкратце: достает все свзанные объекты из таблицы при связи один ко многим, и один к одному.
+# его желательно поаще использовать наряду с values() и values_list()
+# select_related('some_field') - добавляет в SQL запрос инструкцию JOIN
+# и вклюит поля связанного объекта в инструкцию SELECT
+# важно указывать конкретные поля в select_related('some_field', 'some_field__from_another_model')
+# потому что иначе select_related достанет все связанные поля модели Один к Одному и Один ко Многим
+# этой модели
+# отлиный способ использования select_related() (выбрать связанное) смотри в контроллере
+# dashboard_view в accounts.views
+# Важно помнить! для связи Многие к Одному(обратная от один ко многим) и Многие ко Многим
+# select_related - не работает. Для этого есть prefetch_related
+
+# prefetch_related (связанные с предварительной выборкой)- может тоже,
+# что и select_related, но может также добавить связи Многие ко многим и Многие к Одному
+# но работает prefetch_related совершенно не так как select_related
+# prefetch_related - ищет объекты не в базе данных а на уровне python
+# используя prefetch_related мы можем обращаться к полям GenericForeignKey и GenericRelation
+
+
+
+*** select_related И prefetch_related:
+
+
+
+
+Есть такая проблема при работе с ORM как N+1 запросы
+select_related решает эту проблему
+Как он работает?
+Допустим у нас есть модель Train с внешними ключами (многие к одному)
+
+Запрос в бд для такой модели при Train.objects.all() будет:
+
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+	"trains_train"."from_city_id", "trains_train"."to_city_id", 
+	"trains_train"."departure_time", "trains_train"."arrival_time" 
+
+Где "trains_train"."from_city_id", "trains_train"."to_city_id" - внешние ключи
+к таблице "cities_city" (модель City)
+Но в queryset нам будут помимо внешних ключей к модели City доступны также
+и экземпляры этой модели, к которыми экземпляры модели Train привязаны
+
+И вот допустим при коде:
+	
+	for train in Train.objects.all():
+		train.city.name
+
+мы с каждой итерацией будем делать запрос в бд для для таблицы City, чтобы достать name
+это неудобно.
+select_related позволяет решить эту проблему
+
+при Train.objects.all().select_related('from_city', 'to_city')
+наш sql запрос будет выглядить так:
+	
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+	"trains_train"."from_city_id", "trains_train"."to_city_id", 
+	"trains_train"."departure_time", "trains_train"."arrival_time", 
+	"cities_city"."id", "cities_city"."name", T3."id", T3."name" 
+	FROM "trains_train" 
+	INNER JOIN "cities_city" ON ("trains_train"."from_city_id" = "cities_city"."id") 
+	INNER JOIN "cities_city" T3 ON ("trains_train"."to_city_id" = T3."id") 
+	ORDER BY "trains_train"."travel_time" ASC
+
+первый запрос будет больше чем просто обращение к all()
+но зато при таком коде
+	
+	trains = Train.objects.all().select_related('from_city', 'to_city')
+	for t in trains:
+		t.city.name
+
+мы не будем делать дополнительные запросы к таблицу cities_city (модель City)
+
+проверь, если хочешь, с помощью connection.queries (см. tree-of-knowledge/Django/django-db/connection.txt)
+
+* prefetch_related:
+Главное помни, City это родительская модель, а Train дочерняя 
+это работает если select_related сделать из дочерней модели, 
+где прописаны внешнии ключи к родительской модели
+если наоборот нам нужно получить все экземпляры из родительской модели (Один ко многим),
+к которой будут привязаны все дочерние экземпляры (обратная ситуация описанная выше)
+следует использовать prefetch_related
+
+Насчет many2many и one2one не факт что это будет работать (не знаю)
+
+* Важный момент, когда мы вызываем values() где передаем в качестве аргумента, 
+внешний ключ на родительскую модель таким образом 'from_city__name'
+мы уже делаем INNER JOIN будет делаться автоматически,
+и эта values будет работать тоже как select_related, но
+даст словарь в queryset'е:
+	
+	Train.objects.values('id', 'name', 'travel_time', 'from_city_id', 'to_city_id', 
+				'from_city__name', 'to_city__name')
+
+	и 
+
+	Train.objects.select_related('to_city', 'from_city').values('id', 'name', 'travel_time', 
+				'from_city_id', 'to_city_id', 'from_city__name', 'to_city__name')
+
+дадут одинаковые SQL запросу в бд:
+	
+	SELECT "trains_train"."id", "trains_train"."name", "trains_train"."travel_time", 
+		"trains_train"."from_city_id", "trains_train"."to_city_id", 
+		"cities_city"."name", T3."name" 
+	FROM "trains_train" 
+	INNER JOIN "cities_city" ON ("trains_train"."from_city_id" = "cities_city"."id") 
+	INNER JOIN "cities_city" T3 ON ("trains_train"."to_city_id" = T3."id") 
+	ORDER BY "trains_train"."travel_time" ASC
+
+
+select_related оптимизирует запросы для таблицы со связью многие к одному
+
+
+Image.objects.all()
+{'sql': 'SELECT "images_image"."id", "images_image"."owner_id", "images_image"."title", "images_image"."slug", "images_image"."url", "images_image"."image", "images_image"."description
+", "images_image"."created" FROM "images_image" ORDER BY "images_image"."created" DESC LIMIT 21', 'time': '0.000'}
+
+
+Image.objects.all().select_related('owner')
+{'sql': 'SELECT "images_image"."id", "images_image"."owner_id", "images_image"."title", "images_image"."slug", "images_image"."url", "images_image"."image", "images_image"."description
+", "images_image"."created", "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_use
+r"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "images_image" INNER JOIN "auth_user" ON ("images_image"."owner_id"
+ = "auth_user"."id") ORDER BY "images_image"."created" DESC LIMIT 21', 'time': '0.000'}

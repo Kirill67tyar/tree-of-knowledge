@@ -1,0 +1,6 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/howto/outputting-csv/
+
+	пример фукнции, которая приобразует тело HTTP ответа в csv файл
+	(данная функция создана для админки, но можно реализовать и для обработчиков)
+	https://github.com/Kirill67tyar/myshop/blob/master/src/orders/admin.py#L13

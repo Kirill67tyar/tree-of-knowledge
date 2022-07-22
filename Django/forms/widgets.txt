@@ -1,0 +1,38 @@
+https://docs.djangoproject.com/en/4.0/ref/forms/widgets/
+
+Widgets handling input of text
+
+	TextInput
+	NumberInput
+	EmailInput
+	URLInput
+	PasswordInput
+	HiddenInput
+	DateInput
+	DateTimeInput
+	TimeInput
+	Textarea
+
+
+Selector and checkbox widgets
+
+	CheckboxInput
+	Select
+	NullBooleanSelect
+	SelectMultiple
+	RadioSelect
+	CheckboxSelectMultiple
+
+
+File upload widgets
+
+	FileInput
+	ClearableFileInput
+
+
+Composite widgets
+
+	MultipleHiddenInput
+	SplitDateTimeWidget
+	SplitHiddenDateTimeWidget
+	SelectDateWidget

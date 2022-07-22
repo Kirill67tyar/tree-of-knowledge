@@ -1,0 +1,65 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/class-based-views/mixins/
+	
+	моё
+	https://github.com/Kirill67tyar/education-service/blob/master/src/courses/draft.py#L159
+
+Миксин (примись) - это класс, который используется при множественном наследовании
+и добавляет дополнительный функционал в класс
+Примеси удобны в двух случаях:
+- использовать несколко различных функций в рамках класса
+- реализовать одну и ту же функциональность в нескольких классах
+
+
+---------------------------------------------------------------------------------------------
+                        Примеси (Mixins)
+https://docs.djangoproject.com/en/3.2/topics/class-based-views/mixins/
+Примиси (Mixins) - это класс, который используется при множественном наследовании.
+При определении класса можно задействовать несколько примесей, каждая из которых добавит
+часть функций в класс.
+Примеси удобны в двух случаях:
+1 - нужно использовать несколько различных функций в рамках моего класса
+2 - реализовать одну и туже функциональность в нескольких классах
+В rest_framework тоже используются миксины для CRUD функционала
+Вспомни, миксины в rest_framework добавляют нам функционал list, retrieve,create, update, partial_update, destroy
+И работают они совместно с GenericAPIView
+Чтобы определять самому миксины - нужно хорошо разбираться в django, какие методы, за что отвечают,
+какие вызываются и когда, какие атрибуты используются.
+*****Разбор классов обработчиков, и логики кастомных миксинов*****
+OwnerMixin
+базовый миксин для работы owner.
+OwnerEditMixin - для CreateView и UpdateView (переопределяем form_valid), для работы с owner
+OwnerCourseMixin
+унаследован от - OwnerMixin
+класс для работы с курсом. будет использоваться для функционала Read и Delete
+OwnerCourseEditMixin
+унаследован от - OwnerCourseMixin OwnerEditMixin
+допалняет необходимую инфу (атрибуты) для CreateView и UpdateView
+класс для работы с курсом. будет использоваться для функционала Create и Update
+ManageCourseListView OwnerCourseMixin ListView
+Для функционала Read
+CourseCreateView OwnerCourseEditMixin CreateView
+Для функционала Create
+CourseUpdateView OwnerCourseEditMixin UpdateView
+Для функционала Update
+CourseDeleteView OwnerCourseMixin DeleteView
+Для функционала Delete
+form_valid(self, form) - определена в ModelFormMixin (from django.views.generic.edit import ModelFormMixin)
+или чуть раньше. Не путать с методом is_valid форм.
+работает с формами и модельными формами - CreateView, UpdateView. Метод выполняется, когда форма
+успешно проходит валидацию.
+Поведение по умоланию:
+-- сохранение объекта в бд (для модельных форм)
+-- перенаправление пользователя на страницу по адресу success_url (для обыных форм)
+Пока не до конца понятно как он работает, но он как-то связан с CreateView, UpdateView
+про form_valid есть здесь https://docs.djangoproject.com/en/3.2/ref/class-based-views/generic-editing/
+Помни, что для CreateView и UpdateView в шаблоне будет доступна переменная из контекта - form
+больше всего меня обескуражила строчка form.instance.owner = self.request.user в form_valid(form)
+как минимум у обычных форм нету instance как до так и после валидации (во всяком случае у невалидных)
+fields (в OwnerCourseEditMixin) поля модели, из которых будет формироваться объект обрабочиками
+CreateView и UpdateView. Возможно - по большей части для form от CreateView и UpdateView
+success_url - тоже для CreateView и UpdateView - куда перенаправлять в случае успешной обработки
+формы классами CreateView и UpdateView
+Т.е. грубо говоря примеси(миксины) - нужны для определенной функциональности.
+Благодаря миксинам мы создаем возможность делать то-то. И дальше в разных классах можем
+это использовать

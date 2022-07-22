@@ -1,0 +1,48 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/email/
+
+
+В Django есть возможность посылать не только текстовое сообщение в письме
+Но и прикреплять документы с помощью EmailMultiAlternatives
+
+	https://docs.djangoproject.com/en/4.0/topics/email/#sending-alternative-content-types
+
+пример использования EmailMultiAlternatives
+
+	https://github.com/Kirill67tyar/scraping-service-production/blob/master/src/send_emails.py
+
+Ну и массовую рассылку тоже можно устраивать
+
+Есть также встроенная Python библиотека smtplib
+	https://docs.python.org/3/library/smtplib.html
+
+
+Если нельзя использовать SMTP сервер, можно в настройках прописать
+
+	EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+в консоль юудет выводить email сообщения
+
+
+
+
+EMAIL_HOST = хост SMTP-сервера, по умолчанию localhost
+EMAIL_PORT = порт SMTP-сервера, by default - 25
+EMAIL_HOST_USER = логин пользователя для SMTP-сервера
+EMAIL_HOST_PASSWORD = пароль пользователя SMTP-сервера
+EMAIL_USE_TLS = использовать ли защищённое TLS подключение
+EMAIL_USE_SSL = использовать ли защищённое SSL подключение
+
+
+аргументы функции send_mail:
+def send_mail(
+    subject,
+    message,
+    from_email,
+    recipient_list, # кому отправлять
+    fail_silently=False,
+    auth_user=None,
+    auth_password=None,
+    connection=None,
+    html_message=None,
+)

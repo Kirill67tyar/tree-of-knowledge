@@ -1,0 +1,31 @@
+accepted_types
+accepts
+body
+build_absolute_uri
+close
+content_params
+content_type
+csrf_processing_done
+encoding
+environ
+get_full_path() --------------"/api/polls/1/select/"
+get_full_path_info() ---------"/api/polls/1/select/"
+get_host() -------------------"127.0.0.1:8000"
+get_port() -------------------8000
+get_raw_uri() ----------------"http://127.0.0.1:8000/api/polls/1/select"
+get_signed_cookie
+headers
+is_ajax
+is_secure
+method
+parse_file_upload
+path -------------------"/api/polls/1/select/"
+path_info --------------"/api/polls/1/select/"
+read
+readline
+readlines
+resolver_match
+scheme -----------------"http"
+session
+upload_handlers
+user

@@ -1,0 +1,64 @@
+https://docs.djangoproject.com/en/4.0/ref/contrib/admin/
+
+
+файл admin.py
+есть два споссоба добавлять классы к админке:
+1) через вызов напрямую admin.site.register(SomeModel, SomeModelModelAdmin)
+2) через декоратор @admin.register(SomeModel) над классом унаследоавнным от ModelAdmin
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'price', 'available', 'created', 'updated']
+    list_filter = ['available', 'created', 'updated',]
+    list_editable = ['price', 'available',]
+    prepopulated_fields = {'slug': ('name',),}
+
+list_display - то что мы видим в общем списке
+
+list_filter - те поля, по которым мы можем фильтровать
+
+list_editable - добавляет возможность изменять перечисленные поля со страницы списков (из list_display)
+	но все поля list_editable должны быть обязательно в list_display
+	(Важно!) в list_editable лучше не добавлять поля, которые ссылаются на другие таблицы (ForeignKey и т.д.)
+	т.к. мы очень нагружаем базу данных, представь, список, и каждая запись
+	делает запрос к другой таблице
+
+но все поля list_editable должны быть обязательно в list_display
+
+prepopulated_fields - словарь, который автоматически преобразует поле (ключ),
+по выбранному значению. чаще всего используется для добавления слага через админку
+TabularInline
+Оень интересная логика у TabularInline. Этот класс позволяет присоединиться к классу с которым связан
+по ForeignKey, ManyToMany, OneToOneField
+Вот как выглядит
+class OrderItemTabularInline(admin.TabularInline):
+    model = OrderItem
+    raw_id_fields = ['product', ]
+@admin.register(Order)
+class OrderModelAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'first_name', 'last_name',
+                    'email', 'address', 'postal_code',
+                    'city', 'created', 'updated', 'paid', ]
+    list_filter = ['paid', 'created', 'updated', ]
+    inlines = [OrderItemTabularInline, ]
+см. результат
+http://127.0.0.1:8000/admin/orders/order/add/
+1) Создаешь в admin.py класс, который наследуется от admin.TabularInline
+2) Указываешь в этом классе аттрибут model (с какой моделью будет работать этот класс)
+3) Присваиваешь этот класс в списке в аттрибуте inlines
+в классе, в котором хочешь, чтобы эта модель отображалась
+Добавление собственных действий в сайт администрирования, например
+вывод информации из бд в формат csv
+https://docs.djangoproject.com/en/3.2/howto/outputting-csv/
+Когда мы расширяем стандартные страницы сайта администрирования - нужно знать, какие блоки использует django
+блоки в базовом шаблоне сайта администрирования django:
+https://github.com/django/django/tree/main/django/contrib/admin/templates/admin
+Чтобы переопределить шаблоны django - достаточно воспроизвести иерархию папок
+сайта администрирования django в каталоге templates нашего приложения
+тогда django будет находить файлы первыми и использовать их
+А в остальном смотри в приложении orders
+обрати внимание, на то, то мы передали функцию в list_display  - order_detail
+посмотри на что эта функция ссылается и все такое
+Важно!! запомни декоратор @staff_member_required
+Он очень важный для работы с админкой
+staff_member_required - проверяет у request.user - is_staff==True и admin==True
+from django.contrib.admin.views.decorators import staff_member_required

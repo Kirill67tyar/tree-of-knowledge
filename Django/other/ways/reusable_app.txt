@@ -1,0 +1,1 @@
+https://docs.djangoproject.com/en/4.0/intro/reusable-apps/#:~:text=A%20Django%20application%20is%20a,%2C%20urls%20%2C%20and%20views%20submodules.

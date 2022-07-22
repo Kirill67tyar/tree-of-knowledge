@@ -1,0 +1,2 @@
+source:
+	https://django.fun/docs/django/ru/4.0/topics/signing/

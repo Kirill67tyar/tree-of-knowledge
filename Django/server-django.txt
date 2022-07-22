@@ -1,0 +1,130 @@
+"""
+NGINX - 
+
+WSGI - 
+
+uWSGI - 
+
+Как сервер работает для Django:
+
+            :www
+            :
+__________  :       HTTP     _________        Socket     _________         WSGI      __________ 
+| Client |------------------>| NGINX |------------------>| uWSGI |------------------>| Django |
+| browser|<------------------|       |<------------------|       |<------------------|        |
+----------  :                ---------                   ---------                   ----------
+            
+В такой цепочке запрос от клиента обрабатывается в несколько шагов:
+
+1) NGINX принимает HTTP запрос
+
+2) Если запрос на получение статических файлов (CSS, JavaScript, Media), его обрабатывает сам NGINX
+Если запрос на что-то другое, NGINX делегирует его обрабоку веб-серверу uWSGI через сокет
+
+3) uWSGI принимает входящий запрос, и передает его в Django-приложение.
+Результирующий HTTP ответ передается по цепочке в обратном порядке,
+и NGINX отправляет его клиенту.
+
+
+
+
+Для Heroku:
+
+https://devcenter.heroku.com/articles/django-app-configuration
+
+1) Необходимые библиотеки
+
+ - набрать в консоли:
+pip install gunicorn whitenoise dj-database-url psycopg2-binary
+
+ - библиотека gunicorn 
+https://gunicorn.org/
+gunicorn это веб-сервер, который запускает наш проект на heroku
+heroku не имеет своих серверов, поэтому сервер, который запускает проект 
+нужно устанавливать отдельно.
+
+ - библиотека whitenoise
+http://whitenoise.evans.io/en/stable/
+whitenoise работает со статикой, но скорее всего не заменяет NGINX.
+Важно! добавить middleware:
+'whitenoise.middleware.WhiteNoiseMiddleware', именно так:
+
+MIDDLEWARE = [
+	'django.middleware.security.SecurityMiddleware',   # должно уже быть
+	'whitenoise.middleware.WhiteNoiseMiddleware',	   # добавить строго после SecurityMiddleware
+	...]
+
+
+- библиотека dj-database-url
+https://pypi.org/project/dj-database-url/
+dj-database-url - библиотека, которая позволяет подключить базу данных
+к проекту.
+
+ - библиотека psycopg2-binary
+https://pypi.org/project/psycopg2-binary/
+psycopg2-binary - эта библиотека, по сути драйвер между 
+базой данных PostgreSQL и проектом на Django
+Т.е. соединяет postgresql на heroku с таблицами проекта (моделями?!)
+
+
+2) Procfile
+
+https://github.com/Kirill67tyar/scraping-service-second/blob/master/src/Procfile
+
+ - создается просто файл, без формата(!), называется Procfile
+
+ - должен лежать в каталоге где и manage.py (корень проекта, BASE_DIR)
+
+ - должен содержать:
+web: gunicorn scraping_service.wsgi
+выше заменить scraping_service на название папки где хранится wsgi.py
+
+ - очень важно, чтобы файл сохранился в utf-8
+(не открывать в блокноте windows!)
+
+
+
+3) middleware от библиотеки whitenoise
+добавить middleware:
+'whitenoise.middleware.WhiteNoiseMiddleware', именно так:
+
+MIDDLEWARE = [
+	'django.middleware.security.SecurityMiddleware',   # должно уже быть
+	'whitenoise.middleware.WhiteNoiseMiddleware',	   # добавить строго после SecurityMiddleware
+	...]
+
+
+
+4) Если подклюаем postrgresql то настройки базы данных должны быть такие:
+
+DB_NAME = os.environ.get("DB_NAME")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_HOST = os.environ.get("DB_HOST")
+
+# Database
+# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': '5432', # port у postgersql по умолчанию
+    }
+}
+
+т.е. нужно установить эти переменные в виртуальном окружении
+
+
+5) добавить такие строчки:
+
+import dj_database_url
+db = dj_database_url.config()
+DATABASES['default'].update(db)
+
+используя эту библиотеку изменяем значения, чтобы они работали на heroku
+
+"""

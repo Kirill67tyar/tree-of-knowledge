@@ -1,0 +1,12 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/topics/i18n/timezones/
+
+from datetime import datetime
+from django.utils import timezone
+
+datetime.now() # datetime.datetime(2022, 6, 20, 15, 41, 25, 211712) - правильно показывет
+timezone.now() # datetime.datetime(2022, 6, 20, 12, 40, 57, 389295, tzinfo=datetime.timezone.utc) - неправильно показывает
+
+timezone - возвращаемый объект учитывает часовой пояс.
+Django использует настройку USE_TZ, для поддержки временных зон
+по умолчанию USE_TZ = True

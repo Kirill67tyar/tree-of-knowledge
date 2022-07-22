@@ -1,0 +1,60 @@
+auth_group
+	id - INTEGER
+	name - VARCHAR(150)
+
+auth_group_permissions
+	id - INTEGER
+	group_id - INTEGER внешний ключ на auth_group
+	permission_id - INTEGER внешний ключ на auth_permission
+
+	index
+	auth_group_permissions_group_id_vcx213d
+	auth_group_permissions_group_id_permission_id_123asdac3_uniq
+	auth_group_permissions_permission_id_asd3412asd
+
+auth_permission
+	id - INTEGER
+	content_type_id - INTEGER внешний ключ на django_content_type
+	codename - VARCHAR(150) (при этом скорее всего есть db_index за этим полем)
+	name - VARCHAR(255)
+
+	index
+	auth_permission_content_type_id_312jn12
+	auth_permission_content_type_id_codename_312jn12_uniq
+
+
+auth_user
+	id - INTEGER
+	password - VARCHAR(128)
+	username - VARCHAR(150)
+	last_name - VARCHAR(150)
+	email - VARCHAR(254)
+	first_name - VARCHAR(150)
+	is_superuser - BOOL
+	is_staff - BOOL
+	is_active - BOOL
+	last_login - DATETIME - скорее всего когда в последний раз создавался сессионный ключ
+	date_joined - DATETIME - скорее всего когда создадалсь запись в бд, аналог DateTimeField(auto_now_add=True)
+
+auth_user_groups
+	id - INTEGER
+	user_id - INTEGER внешний ключ на auth_user (есть db_index)
+	group_id - INTEGER скорее всего внешний ключ на auth_group (есть db_index)
+	
+	index
+	auth_user_groups_group_id_89465
+	auth_user_groups_user_id_32ij123o
+	auth_user_groups_user_id_group_id_321fsd85_uniq
+
+auth_user_user_permissions
+	id - INTEGER
+	user_id - INTEGER внешний ключ на auth_user (есть db_index)
+	permission_id - INTEGER внешний ключ на auth_permission
+
+	index
+	auth_user_user_permissions_permission_id_321sad2
+	auth_user_user_permissions_user_id_sd432fsd
+	auth_user_user_permissions_user_id_permission_id_sd432fsd
+
+Также сессионный ключ для юзера хранится в таблице django_session 
+и скорее всего его можно переопределить, чтобы он харнился в кэше или redis

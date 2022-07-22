@@ -1,0 +1,207 @@
+https://docs.djangoproject.com/en/4.0/ref/models/fields/
+https://sql-language.ru/sqldatetype.html
+
+-------------------------------------
+1. если мы поместим аргумент primary_key=True при создании нашего поля, то мы переопределим primary key или id
+
+2. db_index=True - идекс баз данных улучшают производительность, имеет смысл их ставить для полей, которые часто 
+   используются в filter, exclude, order_by. Для полей с unique=True и ForeignKey (и возможно на SlugField) - db_index создаётся автоматически
+
+Field types:
+AutoField *
+BigAutoField *
+BigIntegerField *
+BinaryField *?
+BooleanField *
+CharField *?
+DateField *?
+DateTimeField *?
+DecimalField *
+DurationField *?
+EmailField *
+FileField *
+FileField and FieldFile *?
+FilePathField *?
+FloatField *
+GenericIPAddressField *?
+ImageField *
+IntegerField *
+JSONField *?
+PositiveBigIntegerField *
+PositiveIntegerField *
+PositiveSmallIntegerField *
+SlugField *
+SmallAutoField *
+SmallIntegerField *
+TextField *?
+TimeField *
+URLField *
+UUIDField *
+	Relationship fields
+		ForeignKey *
+		ManyToManyField *
+		OneToOneField *
+
+
+ ----- A
+
+AutoField - поле которое используется для id в моделях по умолчанию, каждая новая запись увеличивается на единицу,
+максимальное значение > 2 млрд. Тип данных в db - INT
+!Увага - если мы поместим аргумент primary_key=True при создании нашего поля, то мы переопределим primary key или id
+
+ ----- B
+
+BigAutoField - тоже самое что и AutoField но максимальное значение 9000000000000000000 (9 и восемнадцать 0).
+Тип данных в db - BIGINT
+
+BigIntegerField - тип данных в db - BIGINT. Значение могут быть как положительные так и отрицательные
+
+BinaryField - поле для хранения каких-то бинарников. Тип данных должен быть BINARY. Гугли на эту тему
+По идеи здесь хранится сам файл.
+
+BooleanField - для хранения значение True/False. Или возможно скорее 1 или 0
+
+ ----- C
+
+CharField - для хранения либых символов с ограничением длины 255 символов.
+Тип данных VARCHAR или CHAR
+
+ ----- D
+
+DateField - тип данных в db DATE (Дата в формате ГГГГ-ММ-ДД)
+
+DateTimeField - тип данных в db DATETIME (Дата и время в формате ГГГГ-ММ-ДД ЧЧ:ММ:СС)
+
+DecimalField - тип данных в db DECIMAL.	Дробное число, хранящееся в виде строки.
+В отличие от float здесь дополнена точность вычислений, плюс можно задать кол-во знаков после запятой
+Если нужны денежные вычисления в коде используй это поле.
+
+DurationField - хранит в себе временной промежуток.
+
+ ----- E
+
+EmailField - хранит поле для email. В этом поле есть проверка, чтобы сохраненные данные
+подпадали под паттерн email (в том числе и для ModelForm привязанной к этой модели).
+Тип данных VARCHAR. Само EmailField наследуется от CharField, из Django:
+
+class EmailField(CharField):
+	...
+
+ModelForm формирует поле в html - <input type="email">
+
+ ----- F
+
+FileField - хранит ссылку на файл. Тип данных VARCHAR. Внутри этого поля не хранится сам файл.
+При использовании поля нужно указать место, куда этот файл будет загружаться:
+								
+class MyModel(models.Model):
+    # file will be uploaded to MEDIA_ROOT/uploads
+    upload = models.FileField(upload_to='uploads/')
+    # or...
+    # file will be saved to MEDIA_ROOT/uploads/2015/01/30
+    upload = models.FileField(upload_to='uploads/%Y/%m/%d/')
+
+Физически этот файл будет загружаться на сервер.
+	у экземпляров класса FileField и ImageField есть огромное кол-во своих методов:
+	как то: save(), url() ...
+	Это связано со спецификой работы с файлами в django
+	pp(dir(FileField))
+
+https://django.fun/docs/django/ru/4.0/ref/files/uploads/
+
+
+FilePathField - хранится путь к какому-то файлу
+
+FloatField - Тип данных в db - FLOAT
+
+ ----- G
+
+GenericIPAddressField - хранить API адреса.
+
+ ----- I
+
+ImageField - похож по поведению на FileField. Заимствован от FileField. Тип данных VARCHAR.
+Вот тут интересное использование ImageField:
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/images/forms.py
+! для ImageField необходимо доустановить библиотеку (Pillow), которая работает с изображениями
+	у экземпляров класса FileField и ImageField есть огромное кол-во своих методов:
+	как то: save(), url() ...
+	Это связано со спецификой работы с файлами в django
+	pp(dir(ImageField))
+https://django.fun/docs/django/ru/4.0/ref/files/file/
+https://docs.djangoproject.com/en/4.0/topics/files/
+https://docs.djangoproject.com/en/4.0/ref/files/file/
+https://django.fun/docs/django/ru/4.0/ref/files/uploads/
+
+IntegerField - целочисленное значение (+- 2 млрд с копейками). 
+Тип данных в db - INT. Точный дsиапазон от -2 147 483 648 до 2 147 483 647
+
+ ----- J
+
+JSONField  - в данное поле можно сохранить JSON-объект. Или возможно JSON подобную структуру. 
+Поддерживается не всеми бд (хотя сейчас уже почти всеми).
+Здесь Django позволяет даже искать в этом поле по ключам, парсить этот объект вроде как.
+
+ ----- N
+
+NullBooleanField - тоже самое что и BooleanField, но позволяет это поле оставлять пустым (NULL)
+Null - это ничто, пустое место (null грустит).
+
+ ----- P
+
+Позитивные целочисленные значения.
+		        \
+			 \
+PositiveBigIntegerField   | - тип данных в db - BIGINT
+PositiveIntegerField	  | - тип данных в db - INT
+PositiveSmallIntegerField | - тип данных в db - SMALLINT
+                       ----
+
+проверка чтобы значения этих полей были положительными, делается не на уровне
+django, как это часто бывает, а на уровне db
+	"object_id" integer unsigned NOT NULL CHECK ("object_id" >= 0)
+
+
+ ----- S
+
+SlugField - тоже что и CharField, но с валидацией что это slug. Тип данных в db - VARCHAR.
+Для SlugField всегда желательно ставить unique=True, чтобы слаги были уникальными
+
+SmallAutoField - обычный AutoField, но значение ограничено 32767. Тип данных в db - SMALLINT
+
+SmallIntegerField - обычный IntegerField, но значение ограничено 32767. Тип данных в db - SMALLINT
+
+ ----- T
+
+TextField - тип данных в db - или TEXT или LONGTEXT. Типо неограченное кол-во данных 
+(на самом деле ограниченное конечно же)
+
+TimeField - тип данных в db - TIME (Время в формате ЧЧ:ММ:СС)
+
+ ----- U
+
+URLField - тоже что и CharField, но с валидацией что это url. Тип данных в db - VARCHAR.
+Похоже на SlugField и EmailField, но для url. ModelForm формирует поле в html - <input type="url">
+
+UUIDField - поле которое можно использовать вместо id для таблиц
+Что есть UUID?
+UUID - universally unique identifier
+https://ru.wikipedia.org/wiki/UUID
+https://www.uuidgenerator.net/
+Django поддерживает механизм формирование уникальных uuid для одной базы данных.
+Чем-то схоже с коммитами в git
+
+
+ ----- Relationship fields:
+
+ForeignKey - поле многие к одному (гарем) Тип данных в db - какой-то из BIGINT
+db_index создаётся автоматически
+Интересный пример использования ForeignKey:
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/actions/models.py
+
+ManyToManyField - поле многие ко многим (промискуитет) Тип данных в db - какой-то из BIGINT
+Интересный пример использования ManyToManyField:
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/accounts/models.py
+
+OneToOneField - поле один к одному (моногамия) Тип данных в db - какой-то из BIGINT
+

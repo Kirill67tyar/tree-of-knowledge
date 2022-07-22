@@ -1,0 +1,54 @@
+source:
+	https://docs.djangoproject.com/en/4.0/topics/forms/
+
+
+у класса Form (а точнее у BaseForm от которого Form наследуется)
+есть метод clean.
+clean вызывается в процессе когда проходит проверка на валидность,
+ после вызова метода is_valid()
+
+вот как он описан в BaseForm:
+
+    def clean(self):
+        """
+        Hook for doing any extra form-wide cleaning after Field.clean() has been
+        called on every field. Any ValidationError raised by this method will
+        not be associated with a particular field; it will have a special-case
+        association with the field named '__all__'.
+        """
+        return self.cleaned_data
+
+Этот метод позволяет сделать нам дополнительные проверки, прежде чем мы
+данные из формы ещё как то обработаем в обработчике и отправим на сервер
+хороший пример использования:
+
+	https://github.com/Kirill67tyar/scraping-service-second/blob/master/src/accounts/forms.py
+
+Но с методом clean есть ещё один интересный момент. Мы можем в наших формах сами определять метод
+clean_<что-то там>, например clean_password
+так вот, метод clean будет вызывать все методы начинающие на clean_...
+будут вызываться благодаря методу clean. И далее, вторая часть этого метода clean_...
+попадёт в cleaned_data (в случае с clean_password в cleaned_data попадёт password),
+а значение будет то, что возвращает clean_....
+
+Если в методе clean что-то не проходит проверку, то можно смело вызывать поднимать ошибку ValidationError,
+наследуюмую из django.forms к примеру:
+
+	raise ValidationError('Пользователя с таким логином не существует')
+,
+и на сайте для пользователя нормально отобразится эта ошибка, как текст, что был указан в ошибке
+
+
+--------------------------- В обработчиках
+Подходит для модельной формы
+вот как выглядят аргументы, которые мы передаём в форму в views.py:
+
+class BaseModelForm(BaseForm):
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None,
+                 initial=None, error_class=ErrorList, label_suffix=None,
+                 empty_permitted=False, instance=None, use_required_attribute=None,
+                 renderer=None)
+
+Обрати внимание, по умолчанию, позиционный аргумент мы передаём data
+instance=None  -- передаём экземпляр модели, который хотим изменить
+initial=None -- передаём словарь с изначальными данными для полей

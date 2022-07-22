@@ -1,0 +1,258 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/models/fields/#django.db.models.ManyToManyField
+	https://docs.djangoproject.com/en/4.0/topics/db/examples/many_to_many/
+
+***** ManyToMany с промежуточной моделью
+Создание промежуточной модели бывает полезно, когда необходимо сохранить дополнительную
+информацию об отношении (когда оно было создано - timestamp и т.д.)
+
+пример работы ManyToMany с промежуточной моделью
+https://github.com/Kirill67tyar/bookmarks-service/blob/master/src/accounts/models.py
+django-book - 166
+
+
+***** pprint(dir(ManyToMany))
+auto_creation_counter
+cached_col
+cast_db_type
+check
+class_lookups
+clean
+clone
+contribute_to_class
+contribute_to_related_class
+creation_counter
+db_check
+db_parameters
+db_returning
+db_tablespace
+db_type
+db_type_parameters
+db_type_suffix
+deconstruct
+default_error_messages
+default_validators
+delete_cached_value
+description
+descriptor_class
+do_related_class
+empty_strings_allowed
+empty_values
+flatchoices
+formfield
+get_attname
+get_attname_column
+get_cache_name
+get_cached_value
+get_choices
+get_col
+get_db_converters
+get_db_prep_save
+get_db_prep_value
+get_default
+get_filter_kwargs_for_object
+get_forward_related_filter
+get_internal_type
+get_limit_choices_to
+get_lookup
+get_lookups
+get_path_info
+get_pk_value_on_save
+get_prep_value
+get_reverse_path_info
+get_reverse_related_filter
+get_transform
+has_default
+hidden
+is_cached
+many_to_many
+many_to_one
+merge_dicts
+one_to_many
+one_to_one
+pre_save
+register_lookup
+rel_class
+rel_db_type
+related_model
+related_query_name
+run_validators
+save_form_data
+select_format
+set_attributes_from_name
+set_attributes_from_rel
+set_cached_value
+swappable_setting
+system_check_deprecated_details
+system_check_removed_details
+target_field
+to_python
+unique
+validate
+validators
+value_from_object
+value_to_string
+
+
+
+***** pprint(dir(user.image_likes)) # image_likes - менеджер объектов для many to many
+
+ 'add',   --- добавляет новую запись (user.image_likes.add(image)), если эта запись уже есть, то ничего не делает
+ 'aggregate',
+ 'alias',
+ 'all',
+ 'annotate',
+ 'auto_created',
+ 'bulk_create',
+ 'bulk_update',
+ 'check',
+ 'clear',   --- очищает все записи для конкретного внешнего ключа (user.image_likes.clear())
+ 'complex_filter',
+ 'contains',
+ 'contribute_to_class',
+ 'core_filters',
+ 'count',
+ 'create',
+ 'create_superuser',
+ 'create_user',
+ 'creation_counter',
+ 'dates',
+ 'datetimes',
+ 'db',
+ 'db_manager',
+ 'deconstruct',
+ 'defer',
+ 'difference',
+ 'distinct',
+ 'do_not_call_in_templates',
+ 'earliest',
+ 'exclude',
+ 'exists',
+ 'explain',
+ 'extra',
+ 'filter',
+ 'first',
+ 'from_queryset',
+ 'get',
+ 'get_by_natural_key',
+ 'get_or_create',
+ 'get_prefetch_queryset',
+ 'get_queryset',
+ 'in_bulk',
+ 'instance',
+ 'intersection',
+ 'iterator',
+ 'last',
+ 'latest',
+ 'make_random_password',
+ 'model',
+ 'name',
+ 'none',
+ 'normalize_email',
+ 'only',
+ 'order_by',
+ 'pk_field_names',
+ 'prefetch_cache_name',
+ 'prefetch_related',
+ 'query_field_name',
+ 'raw',
+ 'related_val',
+ 'remove',   --- удаляет запись (user.image_likes.remove(image)), если этой записи нет, то ничего не делает
+ 'reverse',
+ 'select_for_update',
+ 'select_related',
+ 'set',
+ 'source_field',
+ 'source_field_name',
+ 'symmetrical',
+ 'target_field',
+ 'target_field_name',
+ 'through',
+ 'union',
+ 'update',
+ 'update_or_create',
+ 'use_in_migrations',
+ 'using',
+ 'values',
+ 'values_list',
+ 'with_perm']
+
+
+Оказывается, нам доступна промежуточная модель ManyToMany:
+
+	Image.users_like.through
+
+Вот методы этой модели
+ 'check',
+ 'clean',
+ 'clean_fields',
+ 'date_error_message',
+ 'delete',
+ 'from_db',
+ 'full_clean',
+ 'get_deferred_fields',
+ 'id',
+ 'image',
+ 'image_id',
+ 'objects',
+ 'pk',
+ 'prepare_database_save',
+ 'refresh_from_db',
+ 'save',
+ 'save_base',
+ 'serializable_value',
+ 'unique_error_message',
+ 'user',
+ 'user_id',
+ 'validate_unique'
+
+
+
+Кстати не забывай - что поля модели это тоже классы python со своими методами и аттрибуами
+from django.db.models.fields import related
+from django.db.models import fields
+from django.db.models import ManyToOneRel
+Вот аттрибуты и методы поля ManyToOne (ForeignKey для зависимой модели):
+auto_created
+concrete
+db_type
+delete_cached_value
+editable
+empty_strings_allowed
+field
+field_name
+get_accessor_name
+get_cache_name
+get_cached_value
+get_choices
+get_extra_restriction
+get_internal_type
+get_joining_columns
+get_lookup
+get_path_info
+get_related_field
+hidden
+identity
+is_cached
+is_hidden
+is_relation
+limit_choices_to
+many_to_many
+many_to_one
+model
+multiple
+name -- дает название поля (как он назван в модели). Аттрибут
+null
+on_delete
+one_to_many
+one_to_one
+parent_link
+related_model
+related_name
+related_query_name
+remote_field
+set_cached_value
+set_field_name
+symmetrical
+target_field
+

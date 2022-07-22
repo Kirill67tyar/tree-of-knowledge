@@ -1,0 +1,52 @@
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/models/fields/#foreignkey
+	https://docs.djangoproject.com/en/4.0/topics/db/examples/many_to_one/
+
+1) два обязательных аргумента при определении:
+	1 - to
+	2 - on_delete
+
+пример:
+	from_city = ForeignKey(to='cities.City', on_delete=CASCADE,
+                           related_name='trains_start',
+
+2) related_name - тоже желательно определять это будет менеджер объектов (релейтед менеджер, если точнее) для
+родительской (главной) модели. Если его по умолчанию не определять, то он всё равно будет,
+но формироваться будет так <имя_дочерней_модели>_set, к примеру:
+
+	class Train(Model):
+		from_city = ForeignKey(to='cities.City', on_delete=CASCADE,
+                           related_name='trains_start', verbose_name='Из какого города')
+
+	city = City.objects.first()
+	trains = city.train_set.all()
+
+Вот интересный пример для использования related_name:
+https://github.com/Kirill67tyar/find-route-service/blob/master/src/trains/models.py
+Здесь в одной модели мы два раза создаём внешний ключ к другой, одинаковой модели
+Здесь related_name нужно переопределять потому что два раза одна модель ссылается на другую
+и по умолчанию имя не годится
+
+3) варианты on_delete:
+
+3 варианта, которые используются чаще всего:
+
+CASCADE - при удалении записи в родительской таблице, все записи которые ссылаются по этому 
+	  внешнему ключу будут удалены
+
+PROTECT - мы не сможем удалить запись из родительской модели, до тех пор, пока есть хоть одна запись
+	  из дочерней модели, которая ссылается на неё по внешнему ключу
+
+SET_NULL - устанавливает null вместо внешнего ключа, который ссылался на запись, которую удалили.
+	   НО!, очень важно, нужно также установить null=True и blank=True, чтобы null
+	   вообще была возможность поставть
+
+остальные:
+
+DP_NOTHING - 
+
+RESTRICT - 
+
+SET - 
+
+SET_DEFAULT - 

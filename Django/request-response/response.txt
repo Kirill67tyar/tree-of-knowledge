@@ -1,0 +1,92 @@
+sources:
+	https://django.fun/docs/django/ru/4.0/ref/request-response/
+
+	пример формирования response с csv-файлом в теле ответа
+	https://github.com/Kirill67tyar/myshop/blob/master/src/orders/admin.py#L13
+
+Как Django понимает, по какому url к нему обращаются:
+Он получает HTTP запрос парсит строку запроса и заголовки, и уже от-туда вытаскивает UR
+
+mro response::
+
+[<class 'django.http.response.HttpResponse'>,
+ <class 'django.http.response.HttpResponseBase'>,
+ <class 'object'>]
+
+dir response:
+['__bytes__',
+ '__class__',
+ '__contains__',
+ '__delattr__',
+ '__delitem__',
+ '__dict__',
+ '__dir__',
+ '__doc__',
+ '__eq__',
+ '__format__',
+ '__ge__',
+ '__getattribute__',
+ '__getitem__',
+ '__gt__',
+ '__hash__',
+ '__init__',
+ '__init_subclass__',
+ '__iter__',
+ '__le__',
+ '__lt__',
+ '__module__',
+ '__ne__',
+ '__new__',
+ '__reduce__',
+ '__reduce_ex__',
+ '__repr__',
+ '__setattr__',
+ '__setitem__',
+ '__sizeof__',
+ '__str__',
+ '__subclasshook__',
+ '__weakref__',
+ '_charset',
+ '_container',
+ '_content_type_for_repr',
+ '_handler_class',
+ '_reason_phrase',
+ '_resource_closers',
+ 'charset',
+ 'close',
+ 'closed',
+ 'content',
+ 'cookies',
+ 'delete_cookie',
+ 'flush',
+ 'get',
+ 'getvalue',
+ 'has_header',
+ 'headers',
+ 'items',
+ 'make_bytes',
+ 'readable',
+ 'reason_phrase',
+ 'seekable',
+ 'serialize',
+ 'serialize_headers',
+ 'set_cookie',
+ 'set_signed_cookie',
+ 'setdefault',
+ 'status_code',
+ 'streaming',
+ 'tell',
+ 'writable',
+ 'write',
+ 'writelines']
+
+
+Варианты для response
+render
+self.render_to_response - метод в миксине TemplateResponseMixin 
+			(можно передать туда только контекст, а шаблон он будет использовать
+			из атрибута класса template_name)
+render_to_string
+HttpResponse
+JsonResponse
+FileResponse

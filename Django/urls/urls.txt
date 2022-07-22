@@ -1,0 +1,9 @@
+sources:
+	про url
+	https://docs.djangoproject.com/en/4.0/topics/http/urls/
+
+	преобразование параметров url
+	https://docs.djangoproject.com/en/4.0/topics/http/urls/#path-converters
+
+	задавать шаблоны в виде регулярок
+	https://docs.djangoproject.com/en/4.0/ref/urls/#django.urls.re_path
