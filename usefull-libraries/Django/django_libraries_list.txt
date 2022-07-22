@@ -1,0 +1,70 @@
+django-braces (миксины)
+
+django-embed-video (возможность добавлять видео по url)
+
+django-memcache-status (возможность мониторить Memcached через админку)
+
+djangorestframework (построение RESTful API через Django)
+
+python-memcached (python библиотека!) (возможность работать с сервером Memcached через python код)
+
+django-jsonfield - позволяет добавить json поля в sqlite https://pypi.org/project/django-jsonfield/
+
+
+djangorestframework-simplejwt - добавляет аутентификацию через JWT для DRF
+
+есть множество других библиотек для работы JWT через python
+https://pypi.org/project/djangorestframework-simplejwt/
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#installation
+
+
+*** haystack django
+haystack - Это приложение Django, которое работает как абстрактный уровень
+между Django и различными приложениями для поиска.
+Он предоставляет API очень похожий на API QueryrSet Django.
+С помощью него вы можете настраивать ваше приложение, 
+не завязываясь на конкретную СУБД
+https://django-haystack.readthedocs.io/en/master/
+https://haystacksearch.org/
+https://project-haystack.org/
+https://github.com/django-haystack/django-haystack
+
+пример использования
+https://github.com/Kirill67tyar/bookmarks/blob/master/images/templates/images/detail.html
+
+
+*** python social auth
+это Python приложение, которое даёт возможность пользователям использовать
+аккаунты сторонних соцсетей для входа на наш сайт.
+доступна не только для django но и для других фреймвороков на Python
+pip install social-auth-<component>
+$ pip install social-auth-app-django
+https://github.com/python-social-auth
+https://github.com/python-social-auth/social-app-django
+https://python-social-auth.readthedocs.io/en/latest/
+https://django.fun/docs/social-docs/ru/0.1/
+https://pypi.org/project/python-social-auth/
+полный список поддерживаемых бэкэндов аворизации через социальные сети
+https://python-social-auth.readthedocs.io/en/latest/backends/index.html#supported-backends
+
+
+*** Coverage
+даёт возможность узнать степень покрытия проекта тестами
+https://coverage.readthedocs.io/en/6.3.2/
+
+
+*** sorl-thumbnail
+предоставляет способы создания превью изображений
+django-book 154
+pip install sorl-thumbnail
+https://sorl-thumbnail.readthedocs.io/en/latest/
+https://github.com/jazzband/sorl-thumbnail
+
+
+*** braintree
+подключение платёжной системы к Python
+pip install braintree
+https://pypi.org/project/braintree/
+https://github.com/braintree/braintree_python
+https://sandbox.braintreegateway.com/merchants/ykjkq6s94qszsyb9/home
+страница 232 книга

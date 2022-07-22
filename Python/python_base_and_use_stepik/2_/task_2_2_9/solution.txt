@@ -1,0 +1,22 @@
+# не работает, потому что почему-то не импортируется библиотека simplecrypt
+# из консоли, если включить виртуальное окружение - работает
+
+from simplecrypt import decryp, DecryptionException
+with open('task_2_2_9/passwords.txt', 'r') as f:
+	fr = f.read()
+	passwords = fr.split('\n')
+
+with open("task_2_2_9/encrypted.bin", "rb") as f:
+	data = f.read()
+
+count = 0
+while not info:
+	try:
+		info = decrypt(passwords[count], data)
+	except DecryptionException:
+		if count == len(passwords) - 1:
+			print('password not found')
+			break
+			
+		count += 1
+print(info) # b'Alice loves Bob'

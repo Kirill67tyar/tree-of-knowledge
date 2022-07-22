@@ -1,0 +1,9 @@
+
+Варианты серверов, где можно выкладывать проекты:
+	
+	https://www.pythonanywhere.com/ - отличный вариант для python
+	
+	https://www.heroku.com/
+
+	https://www.digitalocean.com/ - отличный вариант, полноценный VPS хостинг
+

@@ -1,0 +1,15 @@
+sources:
+	http://dev-tricks.ru/2016/10/20/goryachie-klavishi-pycharm
+	https://tretyakov.net/post/hotkeys-phpstorm-i-pycharm/
+
+alt + enter - возможность импортировать
+
+alt + левая кнопка мыши - выделение многих строк
+
+ctrl + alt + левая кнопка мыши - перейти к внутренностям функции или класса
+
+ctrl + f - поиск в коде
+
+ctrl + alt + l - выровнять по pep8 (в ubuntu - Shift + Alt + L)
+
+ctrl + q - (на объекте) подсказка с документацией. вызывает метод __doc__

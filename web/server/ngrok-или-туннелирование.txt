@@ -1,0 +1,20 @@
+
+https://ngrok.com/
+https://dashboard.ngrok.com/get-started/your-authtoken
+
+
+1) врубаешь локальный сервер своего проекта (django manage.py runserver)
+2) заходишь в консоли по пути C:\Users\kiril\Desktop\Job\usefull_progs\ngrok>
+3) набираешь в консоли ngrok http 8000 (8000 это порт, если порт в проекте другой, то и здесь его надо поменять)
+4) полуаешь нечтно такое:	
+
+    	Web Interface                 http://127.0.0.1:4040
+    	Forwarding                    http://83b42dc00ec9.ngrok.io -> http://localhost:8000
+    	Forwarding                    https://83b42dc00ec9.ngrok.io -> http://localhost:8000
+
+
+ http://83b42dc00ec9.ngrok.io -> http://localhost:8000 --- адрес для http
+ https://83b42dc00ec9.ngrok.io -> http://localhost:8000 --- адрес для https
+
+Адрес динамический, при перезапуске сервера его тоже надо перезапукать
+

@@ -1,0 +1,53 @@
+Есть такие модули, которые являются встроенными в сам интерпретатор
+
+Модуль sys относится к таким, модулям.
+sys содержит разные системные переменные
+
+Модуль sys обеспечивает доступ к некоторым переменным и функциям, взаимодействующим с интерпретатором python.
+
+Короче это такой модуль, который позволяет работать с python по полной
+с объектами в памяти, с модулями. Вообще с операционной системой
+
+sources:
+    https://pythonworld.ru/moduli/modul-sys.html
+
+При помощи sys можно:
+ - узнать версию интерпретатора
+ - узнать путь к интерпретатору Python sys.executable
+ - возвращает количество ссылок на объект. Аргумент функции getrefcount - еще одна ссылка на объект
+   sys.getrefcount(object)
+ - узнать размер объекта в байтах
+   sys.getsizeof(object[, default])
+
+    import sys
+    t = 1,2,3,
+    ls = [1,2,3,]
+    sys.getsizeof(ls) # 120
+    sys.getsizeof(t) # 120
+
+ - изменить максимальную глубину рекурсии с помощью sys.getrecursionlimit() и sys.setrecursionlimit()
+
+    import sys
+    sys.getrecursionlimit() # 1000
+
+ - есть переменная argv - список аргументов всей командной строки
+   в качестве первого элемента этого списка - имя скрипта,
+   все остальные элементы - аргументы скрипта
+   Если из консоли:
+
+   sys.argv # [
+            #   'C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.2\\plugins\\python-ce\\helpers\\pydev\\pydevconsole.py',
+            #   '--mode=client',
+            #   '--port=49569'
+            # ]
+
+ - узнать все встроенные модули
+
+    import sys
+    print(*sys.builtin_module_names, sep='\n')
+
+ - словарь имен загруженных модулей (скорее всего вообзе все файлы на компьютере с .py) - sys.modules
+
+    import sys
+    from pprint import pprint
+    pprint(sys.modules)

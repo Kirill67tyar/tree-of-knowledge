@@ -1,0 +1,12 @@
+
+
+https://coderlessons.com/tutorials/akademicheskii/osnovy-operatsionnykh-sistem/7-mnogopotochnost-protiv-mnogoprotsessornosti#2
+https://medium.com/@nbosco/multithreading-vs-multiprocessing-in-python-c7dc88b50b5b
+
+
+coutsehunter курс по асинхронному программированию на python:
+https://coursehunter.net/course/asinhronnoe-programmirovanie-na-python-dlya-nachinayushchih
+
+19 урок scraping-service 
+Название - несколько слов об асинхронном запуске функций
+Очень неплохо объясняет про многопоточность, и многопроцессорность

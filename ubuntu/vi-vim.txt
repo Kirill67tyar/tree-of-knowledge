@@ -1,0 +1,26 @@
+sources:
+	https://ru.stackoverflow.com/questions/437417/%D0%9A%D0%B0%D0%BA-%D0%B2%D1%8B%D0%B9%D1%82%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%BE%D1%80%D0%B0-vi-%D0%B8%D0%BB%D0%B8-vim
+	https://stackoverflow.com/questions/8253362/etc-apt-sources-list-e212-cant-open-file-for-writing
+
+----- установка vim в ubuntu bash
+
+	подключить репозиторий софта для ubuntu
+             root@d17e5a87d129:/# apt-get update
+             root@d17e5a87d129:/# apt-get install apt-file
+
+        обновить репозиторий софта для ubuntu
+             root@d17e5a87d129:/# apt-file update
+
+        из этого репозитория установить vim
+             root@d17e5a87d129:/# apt-get install vim
+
+----- создать новый файл с помощью vim
+
+             root@d17e5a87d129:/# vim test.txt
+
+----- выйти из vim
+
+		:wq
+
+	или 
+	https://ru.stackoverflow.com/questions/437417/%D0%9A%D0%B0%D0%BA-%D0%B2%D1%8B%D0%B9%D1%82%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%BE%D1%80%D0%B0-vi-%D0%B8%D0%BB%D0%B8-vim

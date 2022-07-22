@@ -1,0 +1,22 @@
+[
+   {
+      "first_name": "Tom",
+      "hobbies": [
+         "guitar",
+         "cars",
+         "mountains",
+         "adventures"
+      ],
+      "last_name": "Cat"
+   },
+   {
+      "first_name": "Jerry",
+      "hobbies": [
+         "guitar",
+         "cars",
+         "mountains",
+         "adventures"
+      ],
+      "last_name": "Mouse"
+   }
+]

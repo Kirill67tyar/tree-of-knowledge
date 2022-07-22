@@ -1,0 +1,11 @@
+sources:
+	https://pypi.org/project/pip/
+	https://pythonworld.ru/osnovy/pip.html
+	https://dev.to/dev0928/commonly-used-python-pip-commands-255d
+	https://pip.pypa.io/en/stable/
+
+pip freeze - все установленные (не built-in) библиотеки
+
+pip --version - версия pip, а также папка, в которой устанавливаются пакеты
+pip 22.0.4 from C:\Users\kiril\AppData\Local\Programs\Python\Python39\lib\site-packages\pip (python 3.9)
+

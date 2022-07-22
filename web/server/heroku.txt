@@ -1,0 +1,110 @@
+sources:
+	https://devcenter.heroku.com/articles/django-app-configuration
+
+Выкоадываем сайт на Heroku в 3 этапа:
+
+	1 этап - подготавливаем проект django
+
+	2 этап - 
+
+
+1 Этап. Подготавливаем настройки django
+
+steps:
+	1 - создаём папку модуль settings в папке с проектом, где лежал файл settings (важно назвать папку именно так)
+	2 - добавляем в .gitignore запись local_settings.py 
+	3 - перемещаем файл settngs.py в папку settings
+	4 - переименовываем его в local_settings.py
+	5 - делаем чтобы BASE_DIR спускался на уровень ниже 
+		(если используем библиотеку pathlib, то добавляем атрибут parent - 
+		BASE_DIR = Path(__file__).resolve().parent.parent.parent)
+	6 - создаём в папке settings файл production.py
+	7 - в файле settings/__init__.py создаём следующую запись:
+
+		from .production import *
+
+		try:
+    			from .local_settings import *
+		except ImportError:
+    			pass
+
+	8 - создаём в файле production.py следующие переменные:
+
+		DB_NAME = os.environ.get('DB_NAME')
+		DB_PASSWORD = os.environ.get('DB_PASSWORD')
+		DB_HOST = os.environ.get('DB_HOST')
+		DB_USER = os.environ.get('DB_USER')
+		SECRET_KEY = os.environ.get('SECRET_KEY')
+
+2 Этап. Устанаваливаем библиотеки для heroku
+
+steps:
+	1 - создаём в корневой папке (src) файл Procfile (важно! без какого либо расширения)
+	2 - открываем его с помощью notepad++ (естанавливаем notepad++ если надо)
+	3 - пишем там
+		
+		web: gunicorn myproject.wsgi
+
+	где myproject - название проекта
+	4 - преобразовываем в utf-8 (в notepad++ - Кодировки -> Преобразовать в UTF-8)
+	5 - если хочешь писать логи, то записывай вот так:
+		
+		web: gunicorn travel.wsgi --log-file -
+
+	6 - установи gunicorn* 
+		
+		pip install gunicorn
+	
+	7 - pip install dj-database-ur
+
+	8 - pip install psycopg2-binary  (для работы с postgresql)
+
+	9 - в production.py меняешь настройки базы данных (DATABASES) на такие**:
+
+		DATABASES = {
+    			'default': {
+        			'ENGINE': 'django.db.backends.postgresql',
+        			'NAME': DB_NAME,
+        			'USER': DB_USER,
+        			'PASSWORD': DB_PASSWORD,
+        			'HOST': DB_HOST,
+        			'PORT': 5432,# по умолчанию порт для postgresql
+    				}
+			}
+
+		import dj_database_url
+
+		db = dj_database_url.config()
+		DATABASES['default'].update(db)
+
+	10 - pip install whitenoise  (через whitenoise heroku работает со статикой)
+
+
+	11 - записываю зависимости в requirements.txt:
+	
+		pip freeze > requirements.txt
+
+	12 - в production.py добавляешь 
+		
+		STATIC_ROOT = BASE_DIR.joinpath('staticfiles')
+
+	13 - в production.py MIDDLEWARE после SecurityMiddleware 
+		добавляешь 'whitenoise.middleware.WhiteNoiseMiddleware',:
+		
+		MIDDLEWARE = [
+    		'django.middleware.security.SecurityMiddleware',
+    		'whitenoise.middleware.WhiteNoiseMiddleware',
+    		'django.contrib.sessions.middleware.SessionMiddleware',
+		...]
+
+3 Этап. Заливаем на Heroku
+
+steps:
+	
+
+	
+
+*gunicorn - сервер для python и написанный для python. его нужно установить чтобы приложение на heroku
+работало нормально, т.к. heroku не обладает внутренними серверами
+
+**только для postgres

@@ -1,0 +1,7 @@
+sources:
+	https://habr.com/ru/post/426957/
+	https://ru.wikipedia.org/wiki/WSGI
+
+Протокол, для общения веб-серверов таких как nginx или apache
+с web-приложением, написанным на Python
+wsgi - стандартный протокол для общения между python приложениями и web-сервером

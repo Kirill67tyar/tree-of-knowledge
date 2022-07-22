@@ -1,0 +1,3 @@
+
+* Ленивые функции
+https://pythonist.ru/lenivye-vychisleniya-v-python/

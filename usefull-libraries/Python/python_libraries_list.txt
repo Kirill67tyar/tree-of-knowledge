@@ -1,0 +1,210 @@
+sources:
+	https://docs.python.org/3/library/
+	https://pypi.org/
+
+*** datetime
+библиотека для работы с датой и временем
+https://docs.python.org/3/library/datetime.html
+форматы вывода даты
+https://www.ibm.com/docs/en/cmofm/9.0.0?topic=SSEPCD_9.0.0/com.ibm.ondemand.mp.doc/arsa0257.htm
+
+# все встроенные модули (возможно не все)
+import sys
+print(*sys.builtin_module_names, sep='\n')
+
+*** python-memcached 
+(возможность работать с сервером Memcached через python код)
+
+*** requests 
+(работать с HTTP request и response, максимальный функционал)  
+https://docs.python-requests.org/en/latest/
+
+*** python-dotenv 
+(возможность создавать файл с константами для хранения конфедициальной инфы
+связанной с работой сервера, в рамках одного виртуального окружения)
+
+*** urllib3 
+(тоже для работы с HTTP запросами)
+
+*** PyJWT 
+(позволяет организовать систему авторизации через токен. Может быть полезна для DRFr)
+https://pyjwt.readthedocs.io/en/latest/
+https://pypi.org/project/PyJWT/
+
+*** functools 
+модуль для работы с функциями 
+https://pythonworld.ru/moduli/modul-functools.html
+https://pythonim.ru/moduli/functools-python
+
+*** itertools
+содержит функции для работы с итераторами, и создания итераторов
+https://pythonworld.ru/moduli/modul-itertools.html
+https://docs.python.org/3/library/itertools.html
+
+
+*** selenium 
+чтобы была возможность собрать, и распарсить данные на сайтах, отрисованных js-framework'ов
+(как hh) нужна эта библиотека
+пакет, который разрабатывался как тестовая среда, эмулирования поведения браузера 
+что-бы страница, которая при помощи js-framework, отобразилась - 
+нужный полноценный браузер
+сначала, через библиотеку selenium дёргаем сайт, он загружается внутрь данной библиотеки
+там формирует все необходимые данные, там уже выгружаем html, 
+и с помощью beautifulsoup можно эти страницы распарсить
+Максимально кратко - selenium позволяет эмулировать работу браузера
+по сути заменяет библиотеку requests, более хардкорная библиотека
+https://habr.com/ru/post/248559/
+https://habr.com/ru/company/otus/blog/596071/
+https://selenium-python.readthedocs.io/
+
+*** fake-headers 
+позволяет генерировать fake headrs https://pypi.org/project/fake-headers/
+
+*** collections.abc 
+предоставляет базовые классы для работы с последовательностяит Sequence MutableSequence
+https://docs.python.org/3/library/collections.abc.html
+https://digitology.tech/docs/python_3/library/collections.abc.html
+
+*** sys
+обеспечивает доступ к некоторым переменным и функциям, взаимодействующим с интерпретатором python.
+https://pythonworld.ru/moduli/modul-sys.html
+https://docs.python.org/3/library/sys.html
+https://pythonim.ru/moduli/sys-python
+
+
+*** copy
+https://docs.python.org/3/library/copy.html
+https://pythonworld.ru/moduli/modul-copy.html
+Две функции:
+ copy(obj) - shallow copy
+ deepcopy(obj) - deep copy
+Функция deepcopy() может быть очень полезна
+
+*** random
+https://docs.python.org/3/library/random.html
+https://pythonworld.ru/moduli/modul-random.html
+
+*** decimal
+https://docs.python.org/3/library/decimal.html
+https://pyprog.pro/python/st_lib/decimal.html
+
+*** fraction
+Модуль fractions предоставляет поддержку рациональных чисел.
+для дробей можно сказать
+https://pythonworld.ru/moduli/modul-fractions.html
+https://docs.python.org/3/library/fractions.html
+
+*** operator
+https://docs.python.org/3/library/operator.html
+
+*** shutil
+Модуль shutil содержит набор функций высокого уровня для обработки файлов, 
+групп файлов, и папок. В частности, доступные здесь функции позволяют копировать, 
+перемещать и удалять файлы и папки. Часто используется вместе с модулем os.
+https://pythonworld.ru/moduli/modul-shutil.html
+https://docs.python.org/3/library/shutil.html
+https://digitology.tech/docs/python_3/library/shutil.html
+
+
+*** re
+Регулярные выражения — специальная последовательность символов, 
+которая помогает сопоставлять или находить строки python с 
+использованием специализированного синтаксиса, содержащегося в шаблоне. 
+Регулярные выражения распространены в мире UNIX.
+
+Модуль re предоставляет полную поддержку выражениям, подобным Perl в Python. 
+Модуль re поднимает исключение re.error, если возникает ошибка 
+при компиляции или использовании регулярного выражения.
+https://docs.python.org/3/library/re.html
+https://pyneng.readthedocs.io/ru/latest/book/15_module_re/
+
+
+*** smtplib
+Встроенная библиотека Python для отправки SMTP запросов
+(посылать письма)
+https://docs.python.org/3/library/smtplib.html
+
+
+*** Redis
+ORM для работы с сервером Redis
+https://pypi.org/project/redis/
+https://redis.readthedocs.io/en/latest/
+
+
+----- файлами разлтчных типов данных (строчные)  -----
+*** xml
+для работы с xml документами
+https://docs.python.org/3/library/xml.etree.elementtree.html
+https://python-scripts.com/xml-python
+
+
+*** lxml
+для парсинга HTML документов, поход по работае с xml (аналог beautiful soup)
+https://webdevblog.ru/vvedenie-v-biblioteku-python-lxml/
+https://lxml.de/
+https://pypi.org/project/lxml/
+
+*** csv
+для работы с csv документами
+https://docs.python.org/3/library/csv.html
+https://pythonworld.ru/moduli/modul-csv.html
+
+
+*** json
+для работы с json документами
+https://docs.python.org/3/library/json.html
+https://pythonworld.ru/moduli/modul-json.html
+
+*** elizabeth
+позволяет генерировать большие объёмы JSON данных
+https://python-scripts.com/elizabeth
+
+
+*** ReportLab Python PDF library
+позволяет работать с PDF форматом
+так же может широко использоваться в Django
+https://www.reportlab.com/opensource/
+https://docs.djangoproject.com/en/4.0/howto/outputting-pdf/
+
+
+*** PyFPDF / PyFPDF2
+ещё одна библиотека для работы с PDF (более простая)
+pip install fpdf
+https://pypi.org/project/fpdf/
+https://pyfpdf.readthedocs.io/en/latest/index.html
+https://pyfpdf.readthedocs.io/en/latest/reference/write_html/index.html#write_html
+ХОТЯ есть мнение что PyFPDF устарел и на смену ему пришёл PyFPDF2
+
+PyFPDF2
+https://pypdf2.readthedocs.io/en/latest/
+https://pypi.org/project/PyPDF2/
+
+
+*** pdfkit
+отличная библиотека для ковертации html в pdf и вообще для
+работы с pdf
+необходимо также установить программу wkhtmltopdf
+и прописать её в путях
+https://pypi.org/project/pdfkit/
+https://www.javatpoint.com/converting-html-to-pdf-files-using-python
+мои варианты
+https://github.com/Kirill67tyar/shop/blob/master/orders/views.py#L122
+https://github.com/Kirill67tyar/shop/blob/master/payment/views.py#L22
+
+
+----- для работы с бинарными файлами (jpeg, mp3, gif) -----
+*** pillow
+библиотека для работы с изображениями
+https://pillow.readthedocs.io/en/stable/
+https://pypi.org/project/Pillow/
+https://pythonru.com/biblioteki/osnovnye-vozmozhnosti-biblioteki-python-imaging-library-pillow-pil
+
+*** vawe
+для музыкальных данных
+https://docs.python.org/3/library/wave.html
+https://digitology.tech/docs/python_3/library/wave.html
+
+*** audio-tools
+для музыкальных данных (мало инфы)
+https://github.com/tuffy/python-audio-tools
+http://audiotools.sourceforge.net/install.html

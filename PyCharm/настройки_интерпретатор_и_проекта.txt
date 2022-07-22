@@ -1,0 +1,22 @@
+Настройки интерпретатора и проекта:
+
+file -> settings -> Project:<name project> -> Python Interpretator/Project Structure
+
+1 - Проблема с виртуальным окружением?
+
+file -> settings -> Project:<name project> -> Python Interpretator
+Если не находит твое виртупльное окружение. В строке Python interpreter: должен быть знак python с зеленой галочкой,
+и также указан путь к файлу (python.exe) в твоём виртуальном окружении, к примеру:
+C:\Users\kiril\Desktop\Job\django_repeat_07\find-route-service\venv\Scripts\python.exe
+
+если он не указан, или стоит какой-то другой, то нужно нажать:
+1) на шестерёнку, выбрать Add..
+2) выбрать Existing environment, и в списке выбрать уже существующий
+3) нажать ок
+
+
+2 - При настройке проекта нужно выбрать корневую папку (обычно src)
+
+file -> settings -> Project:<name project> -> Project Structureы
+
+

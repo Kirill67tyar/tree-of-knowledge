@@ -1,0 +1,3 @@
+sources:
+	https://www.hostinger.com.ua/rukovodstva/osnovnyje-komandy-linux
+	https://selectel.ru/blog/basic-linux-commands/

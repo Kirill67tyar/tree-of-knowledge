@@ -1,0 +1,146 @@
+sources:
+	https://redis.io/docs/
+	https://redis.io/
+
+	https://ru.wikipedia.org/wiki/Redis
+	https://habr.com/ru/post/178525/
+
+
+
+#                   Redis
+
+# Оглавление:
+# --- возможности
+# --- ссылки
+# --- характеристики
+# --- поддерживает типы данных
+# --- SQL vs Redis
+# --- консоль
+# --- конфигурация Redis с Django
+
+
+# Redis - remote dictionary server
+# хранилище данных, которое хранит данные в формате ключ - значение
+# Нереляционная база данных
+# Официально на Windows Redis не поддерживается, но потанцевать с бубном и установить - можно
+# нужно установить WSL2 - https://docs.microsoft.com/en-us/windows/wsl/install
+
+
+# ------- возможности (в лучших традициях CRUD):
+# - задать данные SET <key> <value>
+# - полуить GET <key>
+# - проверить существуют ли дынные EXISTS <key>
+# - удалить DELETE <key>
+# - удалить через n секунд EXPIRE <key> n    (Где n - колиество секунд ввиде числа)
+# - удалить в нужное время EXPIREAT <key> 00:00:00    (может формат времени пишется по другому)
+
+
+# ------- ссылки
+
+# установка Redis на Windows 
+# просто (разжёванно)
+# https://skillbox.ru/media/base/kak_ustanovit_redis_v_os_windows_bez_ispolzovaniya_docker/
+# посложнее
+# https://redis.io/docs/getting-started/installation/install-redis-on-windows/
+
+# по работе Redis в python:
+# https://pypi.org/project/redis/
+# https://redis.readthedocs.io/en/latest/
+
+# по работе Redis в django:
+# https://github.com/jazzband/django-redis
+
+# официальный сайт Redis:
+# https://redis.io/
+
+# команды и документация Redis:
+# https://redis.io/commands
+# https://redis.io/documentation
+
+# поддерживаемые типы данных Redis
+# https://redis.io/docs/manual/data-types/
+# https://redis.io/docs/manual/data-types/data-types-tutorial/
+
+# прочие статьи
+# https://habr.com/ru/post/178525/
+# https://devops-courses.zone3000.net/redis-dlya-nachinayuschih/
+
+# видно урок по Redis
+https://coursehunter.net/course/redis-osnovy-i-prakticheskoe-ispolzovanie
+
+
+# ------- характеристики:
+#  - оптимизировано для быстрого ввода-вывода
+#  - позволяет использовать различные структуры данных
+#  - хранит данные в оперативной памяти, но можно настроить
+#     копирование блоков данных на диски с определённой переодичностью
+#     или при наступлении некоторого действия
+#  - хорошо расширяется, довольно гибкий
+#  - бд идентифицируется по уникальному ID вместо имени 
+#  - по умолчанию клиент подключается к бд с ID 0, доступно 16 бд, можно изменить
+# 
+
+# ------- поддерживает типы данных:
+#  - строки
+#  - хеши
+#  - списки
+#  - кортежи
+#  - сортированные кортежи
+#  - множества (для ранжировки)
+#  - битовые карты
+#  - HyperLogLogs
+# 
+
+# ------- SQL vs Redis
+# SQL лучше подходит - долговременное хранения относительно постоянных данных
+
+# Redis лучше подходит - часто изменяющейся информации или той, к которой
+#   необходимо иметь быстрый доступ (например к кешу)
+#   подходит для некоторых типов задач, когда необходим быстрый доступ к данным:
+#   	- подсчёт событий - incr() и incrby()
+#   	- сохранение последних объектов - lpush() rpush() - в начало или конец
+#   	  удаление первого или последнего элемента - lpop() rpop()
+#   	- очереди - Reids поддерживает блокировку очереди
+#   	- подписки на события. есть команды для рассылки и подписки на уведомления
+#   	- кеширование. expire() и expireat() - позволяют использовать Redis в качестве слоя кеширования
+#   	  существуют библиотеки для подключения этого хранилища к Django в качестве кеша
+#   	- ранжирование
+#   	- отслеживание в реальном режиме. Быстрая система ввода-вывода Redis позволяет
+#	  использовать его в режиме реального времени для отслеживания дий
+
+
+# ------- консоль
+# порт Redis - 6379
+# Параллельно сервер Redis должен быть запущен в другой консоли
+# установка и запуск Redis (если установлен, то приступай сразу к запуску)
+# https://skillbox.ru/media/base/kak_ustanovit_redis_v_os_windows_bez_ispolzovaniya_docker/
+# запуск Redis
+# redis-server
+# 
+# в другой консоли
+# redis-cli
+# 127.0.0.1:6379> EXPIRE name 2
+# 	(integer) 1
+# 127.0.0.1:6379> GET name
+# 	(nil)
+# 127.0.0.1:6379> GET total 1
+# 	(error) ERR wrong number of arguments for 'get' command
+# 127.0.0.1:6379> SET total 1
+# 	OK
+# 127.0.0.1:6379> GET total
+# 	"1"
+# 127.0.0.1:6379> DEL total
+# 	(integer) 1
+# 127.0.0.1:6379> GET total
+# 	(nil)
+# 127.0.0.1:6379> SET name "Kirill"
+# 	OK
+# 127.0.0.1:6379> GET name
+# 	"Kirill"
+
+
+# ------- конфигурация Redis с Django
+# REDIS_HOST = 'localhost' # 127.0.0.1 | some_pro_host.ru
+# REDIS_PORT = 6379
+# REDIS_DB = 0
+

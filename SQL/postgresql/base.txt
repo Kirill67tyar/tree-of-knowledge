@@ -1,0 +1,6 @@
+
+				Postgresql
+
+sources:
+	типы данных
+	https://postgrespro.ru/docs/postgresql/9.4/datatype
