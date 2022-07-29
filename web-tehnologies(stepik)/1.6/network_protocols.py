@@ -522,6 +522,7 @@ while True:
     while True:
         # ****
         data = conn.recv(1024) # читаем данные
+        # recv - чтение из сокета, чтение из сети
         # *****
         if not data:
             break

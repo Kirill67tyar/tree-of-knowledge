@@ -23,7 +23,7 @@ sources:
 >>> reset_queries()
 
 
-
+from pprint import pprint as pp
 from django.db import connection, reset_queries
-connection.queries
+pp(connection.queries)
 reset_queries()

@@ -1,0 +1,3 @@
+sources:
+    отличная статья по аутентификации в DRF
+    https://starkovden.github.io/authentication-and-authorization.html

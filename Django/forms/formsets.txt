@@ -2,6 +2,8 @@ sources:
 	https://docs.djangoproject.com/en/4.0/topics/forms/formsets/
 	https://docs.djangoproject.com/en/3.2/topics/forms/formsets/
 	https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/#model-formsets
+	https://docs.djangoproject.com/en/4.0/ref/forms/models/
+	https://docs.djangoproject.com/en/4.0/topics/forms/modelforms/#inline-formsets
 
 ---------------------------------------------------------------------------------------------
                                     formsets

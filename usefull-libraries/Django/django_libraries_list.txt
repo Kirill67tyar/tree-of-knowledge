@@ -68,3 +68,20 @@ https://pypi.org/project/braintree/
 https://github.com/braintree/braintree_python
 https://sandbox.braintreegateway.com/merchants/ykjkq6s94qszsyb9/home
 страница 232 книга
+
+
+*** django-braces
+https://django-braces.readthedocs.io/en/latest/
+https://pypi.org/project/django-braces/
+ВСевозможные дополнительные крутые миксины для Django
+
+
+*** django-embed-video
+позволяет встраивать в шаблоны видео по url (youtube)
+https://pypi.org/project/django-embed-video/
+https://django-embed-video.readthedocs.io/en/latest/
+
+*** django-memcache-status
+приложение, которое собирает статистику по каждому
+рабочему процессу memcached
+https://pypi.org/project/django-memcache-status/

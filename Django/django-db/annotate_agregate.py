@@ -14,13 +14,17 @@ sources:
     об агрегации
     https://www.ibm.com/docs/ru/spss-statistics/25.0.0?topic=SSLVMB_25.0.0/spss/base/idh_aggr.html
 
+
 Если вкратце то:
 
-
 --- annotate:
-       - many2many:
+       - многие ко многим:
          (some_count=Count('some_field_many2many')):
                 делает один SQL запрос используя LEFT OUTER JOIN
+       - один ко многим (из родительской модели)
+                делает один SQL запрос используя LEFT OUTER JOIN
+                используя аггрегирующую функцию SQL - COUNT
+
 
 
 ---------------------------------------------------------------------------------------------------

@@ -12,29 +12,43 @@ https://www.ibm.com/docs/en/cmofm/9.0.0?topic=SSEPCD_9.0.0/com.ibm.ondemand.mp.d
 import sys
 print(*sys.builtin_module_names, sep='\n')
 
+
+*** dataclass
+Позволяет автоматизировать создание классов,
+не прописывать __init__, __repr__, __str__ и возможно что-то ещё
+https://docs.python.org/3/library/dataclasses.html
+https://habr.com/ru/post/415829/
+
+
 *** python-memcached 
 (возможность работать с сервером Memcached через python код)
+
 
 *** requests 
 (работать с HTTP request и response, максимальный функционал)  
 https://docs.python-requests.org/en/latest/
 
+
 *** python-dotenv 
 (возможность создавать файл с константами для хранения конфедициальной инфы
 связанной с работой сервера, в рамках одного виртуального окружения)
 
+
 *** urllib3 
 (тоже для работы с HTTP запросами)
+
 
 *** PyJWT 
 (позволяет организовать систему авторизации через токен. Может быть полезна для DRFr)
 https://pyjwt.readthedocs.io/en/latest/
 https://pypi.org/project/PyJWT/
 
+
 *** functools 
 модуль для работы с функциями 
 https://pythonworld.ru/moduli/modul-functools.html
 https://pythonim.ru/moduli/functools-python
+
 
 *** itertools
 содержит функции для работы с итераторами, и создания итераторов
@@ -57,13 +71,16 @@ https://habr.com/ru/post/248559/
 https://habr.com/ru/company/otus/blog/596071/
 https://selenium-python.readthedocs.io/
 
+
 *** fake-headers 
 позволяет генерировать fake headrs https://pypi.org/project/fake-headers/
+
 
 *** collections.abc 
 предоставляет базовые классы для работы с последовательностяит Sequence MutableSequence
 https://docs.python.org/3/library/collections.abc.html
 https://digitology.tech/docs/python_3/library/collections.abc.html
+
 
 *** sys
 обеспечивает доступ к некоторым переменным и функциям, взаимодействующим с интерпретатором python.
@@ -80,13 +97,16 @@ https://pythonworld.ru/moduli/modul-copy.html
  deepcopy(obj) - deep copy
 Функция deepcopy() может быть очень полезна
 
+
 *** random
 https://docs.python.org/3/library/random.html
 https://pythonworld.ru/moduli/modul-random.html
 
+
 *** decimal
 https://docs.python.org/3/library/decimal.html
 https://pyprog.pro/python/st_lib/decimal.html
+
 
 *** fraction
 Модуль fractions предоставляет поддержку рациональных чисел.
@@ -94,8 +114,10 @@ https://pyprog.pro/python/st_lib/decimal.html
 https://pythonworld.ru/moduli/modul-fractions.html
 https://docs.python.org/3/library/fractions.html
 
+
 *** operator
 https://docs.python.org/3/library/operator.html
+
 
 *** shutil
 Модуль shutil содержит набор функций высокого уровня для обработки файлов, 
@@ -131,6 +153,13 @@ https://pypi.org/project/redis/
 https://redis.readthedocs.io/en/latest/
 
 
+*** python-memcached
+orm python для работы с кэшированием memcached
+!! - документации как таковой нет
+!! - в операционной системе должен быть установлен memcached
+https://pypi.org/project/python-memcached/
+
+
 ----- файлами разлтчных типов данных (строчные)  -----
 *** xml
 для работы с xml документами
@@ -154,6 +183,7 @@ https://pythonworld.ru/moduli/modul-csv.html
 для работы с json документами
 https://docs.python.org/3/library/json.html
 https://pythonworld.ru/moduli/modul-json.html
+
 
 *** elizabeth
 позволяет генерировать большие объёмы JSON данных
@@ -199,12 +229,25 @@ https://pillow.readthedocs.io/en/stable/
 https://pypi.org/project/Pillow/
 https://pythonru.com/biblioteki/osnovnye-vozmozhnosti-biblioteki-python-imaging-library-pillow-pil
 
+
 *** vawe
 для музыкальных данных
 https://docs.python.org/3/library/wave.html
 https://digitology.tech/docs/python_3/library/wave.html
 
+
 *** audio-tools
 для музыкальных данных (мало инфы)
 https://github.com/tuffy/python-audio-tools
 http://audiotools.sourceforge.net/install.html
+
+
+----- GUI фреймворки (grafical user interface) -----
+
+*** tkinter
+встроенная библиотека, которая предоставляет 
+графический интерфейс
+https://docs.python.org/3/library/tkinter.html
+https://python-scripts.com/tkinter
+
+

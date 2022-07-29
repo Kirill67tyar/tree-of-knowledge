@@ -20,3 +20,27 @@
 #         fields = ('name',)
 
 
+--------- Model Form Functions --------
+sources:
+	https://docs.djangoproject.com/en/4.0/ref/forms/models/
+
+Допустим, мы хотим сделать так, чтобы модельная форма создавалась динамиечски
+(не в файле forms.py)
+Для этого есть modelform_factory
+
+
+from django.forms import modelform_factory
+
+Form = modelform_factory(
+    model=model, # имя модели для которой создаём модельную форму
+    
+    exclude=[ 		
+        'owner', 'order', 'created', 'updated',
+    ]
+)
+exclude - поля, которые мы исключаем
+есть fields - поля, которые мы хотим чтобы создавались
+Это хорошо подходит для создания домельной формы, когда есть несколько
+различных моделей, и нам нужно в разных ситуациях от разных моделей создавать эти
+модельные формы
+
